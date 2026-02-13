@@ -1,0 +1,152 @@
+Build a complete React Native mobile application using Expo and TypeScript from scratch.
+
+App Name: Daily Spark - Motivation & Quotes
+
+The app must include BOTH:
+1) User App (for viewing quotes)
+2) Admin Panel inside the same app (hidden & protected by login)
+
+Use:
+- Expo + React Native
+- Supabase as backend (database + auth)
+- React Navigation
+- AdMob ads
+- Modern UI with animations
+
+====================
+SUPABASE DATABASE STRUCTURE
+====================
+
+Create these tables:
+
+1) quotes
+- id (uuid, primary key)
+- text (text)
+- author (text)
+- category (text)
+- image_url (text, nullable)
+- created_at (timestamp)
+
+2) admins
+- id (uuid)
+- email (text)
+- role (text = "admin")
+
+3) ad_settings
+- id (uuid)
+- banner_enabled (boolean)
+- interstitial_enabled (boolean)
+
+====================
+FEATURES
+====================
+
+USER SIDE:
+- Home Screen: list of quotes
+- Category filter
+- Like/Favorite quote
+- Share quote
+- Smooth animations
+- Banner Ad at bottom
+- Interstitial Ad every 5 clicks (if enabled from admin)
+
+ADMIN PANEL (inside the app):
+- Admin Login Screen (Supabase Auth)
+- Admin Dashboard
+- Add Single Quote form
+- Upload Multiple Quotes (CSV or Excel)
+- Edit Quote
+- Delete Quote
+- Manage Categories
+- Toggle AdMob Ads ON/OFF
+- Only admin can access admin screens
+
+====================
+MULTIPLE QUOTE UPLOAD
+====================
+
+Admin can upload CSV or Excel file with columns:
+- text
+- author
+- category
+
+Parse file and insert all rows into Supabase database.
+
+====================
+ADMOB
+====================
+
+Use test AdMob IDs.
+Admin can enable/disable:
+- Banner ads
+- Interstitial ads
+
+====================
+PROJECT STRUCTURE
+====================
+
+Provide full code with this structure:
+
+/App.tsx
+/src
+  /screens
+    HomeScreen.tsx
+    CategoryScreen.tsx
+    AdminLoginScreen.tsx
+    AdminDashboardScreen.tsx
+    AddQuoteScreen.tsx
+    BulkUploadScreen.tsx
+    EditQuoteScreen.tsx
+    AdSettingsScreen.tsx
+  /components
+    QuoteCard.tsx
+  /services
+    supabase.ts
+    quoteService.ts
+    adService.ts
+  /navigation
+    AppNavigator.tsx
+
+====================
+REQUIREMENTS
+====================
+
+- Full working code
+- No placeholders
+- No pseudo code
+- All screens implemented
+- Supabase client setup
+- CRUD operations (create, read, update, delete)
+- Bulk upload logic
+- Admin authentication
+- AdMob integration
+- Animations
+- Clean UI
+- Error handling
+- Comments in code
+- Ready to run in Expo
+- Ready to build APK
+
+====================
+OUTPUT FORMAT
+====================
+
+Give me:
+1) Step-by-step setup instructions
+2) Supabase SQL schema
+3) Full project file structure
+4) Full code for every file
+5) Instructions to run app
+6) Instructions to build APK
+7) How admin uploads multiple quotes
+8) How to turn ads on/off
+
+Important:
+- This must be a React Native Expo mobile app
+- Not a web app
+- Include admin panel inside the app
+- Everything should be FREE to use
+- Do not skip any file
+- Provide full final code
+
+Start generating the complete project now.
