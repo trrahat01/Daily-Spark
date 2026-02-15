@@ -1,0 +1,74 @@
+-- Enable UUID extension for generating IDs
+create extension if not exists "uuid-ossp";
+
+-- 1. Quotes Table
+create table if not exists public.quotes (
+  id uuid default uuid_generate_v4() primary key,
+  text text not null,
+  author text not null,
+  category text not null,
+  image_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 2. Categories Table
+create table if not exists public.categories (
+  id uuid default uuid_generate_v4() primary key,
+  name text not null unique,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 3. Admins Table (Used for custom PIN-based auth)
+create table if not exists public.admins (
+  id uuid default uuid_generate_v4() primary key,
+  email text not null unique,
+  pin text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 4. Ad Settings Table
+create table if not exists public.ad_settings (
+  id uuid default uuid_generate_v4() primary key,
+  banner_enabled boolean default true,
+  interstitial_enabled boolean default true,
+  banner_id text,
+  interstitial_id text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- SEED DATA
+
+-- Default Categories
+insert into public.categories (name) values
+  ('Motivation'),
+  ('Inspiration'),
+  ('Life'),
+  ('Success'),
+  ('Wisdom')
+on conflict (name) do nothing;
+
+-- Default Admin (as per replit.md)
+insert into public.admins (email, pin) values
+  ('admin@dailyspark.com', '1234')
+on conflict (email) do nothing;
+
+-- Default Ad Settings (Ensure one row exists)
+insert into public.ad_settings (banner_enabled, interstitial_enabled)
+select true, true
+where not exists (select 1 from public.ad_settings);
+
+-- ROW LEVEL SECURITY (RLS)
+-- Since the app uses the Supabase client directly with the anon key and handles
+-- admin verification via the 'admins' table lookup, we enable public access.
+
+alter table public.quotes enable row level security;
+create policy "Public access to quotes" on public.quotes for all using (true);
+
+alter table public.categories enable row level security;
+create policy "Public access to categories" on public.categories for all using (true);
+
+alter table public.admins enable row level security;
+create policy "Public access to admins" on public.admins for all using (true);
+
+alter table public.ad_settings enable row level security;
+create policy "Public access to ad_settings" on public.ad_settings for all using (true);

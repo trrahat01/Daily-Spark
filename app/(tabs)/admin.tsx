@@ -185,6 +185,12 @@ export default function AdminScreen() {
       subtitle: "Manage quote categories",
       path: "/admin/categories",
     },
+    {
+      icon: "megaphone-outline" as const,
+      title: "Ad Settings",
+      subtitle: "Configure AdMob IDs and visibility",
+      path: "/admin/ad-settings",
+    },
   ];
 
   return (
