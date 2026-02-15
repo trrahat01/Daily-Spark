@@ -17,7 +17,6 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Colors from "@/constants/colors";
 import { getQuotes, updateQuote, getCategories } from "@/lib/quote-storage";
-import { Quote } from "@/lib/data";
 
 export default function EditQuoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,12 +27,12 @@ export default function EditQuoteScreen() {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  const { data: quotes = [] } = useQuery<Quote[]>({
+  const { data: quotes = [] } = useQuery({
     queryKey: ["quotes"],
     queryFn: getQuotes,
   });
 
-  const { data: categories = [] } = useQuery<string[]>({
+  const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
   });

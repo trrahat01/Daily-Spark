@@ -17,10 +17,15 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import Colors from "@/constants/colors";
-import { Quote } from "@/lib/data";
 
 interface QuoteCardProps {
-  quote: Quote;
+  quote: {
+    id: string;
+    text: string;
+    author: string;
+    category: string;
+    liked: boolean;
+  };
   index: number;
   onToggleLike: (id: string) => void;
 }

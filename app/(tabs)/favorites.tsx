@@ -13,7 +13,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 import { getFavorites, toggleLike } from "@/lib/quote-storage";
-import { Quote } from "@/lib/data";
 import QuoteCard from "@/components/QuoteCard";
 
 export default function FavoritesScreen() {
@@ -22,7 +21,7 @@ export default function FavoritesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
-  const { data: favorites = [], isLoading } = useQuery<Quote[]>({
+  const { data: favorites = [], isLoading } = useQuery({
     queryKey: ["favorites"],
     queryFn: getFavorites,
   });

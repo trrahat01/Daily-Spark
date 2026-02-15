@@ -6,7 +6,6 @@ import {
   TextInput,
   Pressable,
   Platform,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,14 +18,15 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import Colors from "@/constants/colors";
-import { isAdminLoggedIn, setAdminLoggedIn } from "@/lib/quote-storage";
-import { ADMIN_PIN } from "@/lib/data";
+import { isAdminLoggedIn, setAdminLoggedIn, adminLogin } from "@/lib/quote-storage";
 
 export default function AdminScreen() {
   const insets = useSafeAreaInsets();
+  const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const shakeX = useSharedValue(0);
   const webTopInset = Platform.OS === "web" ? 67 : 0;
@@ -43,28 +43,42 @@ export default function AdminScreen() {
   }));
 
   const handleLogin = async () => {
-    if (pin === ADMIN_PIN) {
-      await setAdminLoggedIn(true);
-      setLoggedIn(true);
-      setPin("");
-      setError("");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (!email.trim() || !pin.trim()) {
+      setError("Please enter both email and PIN.");
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      const success = await adminLogin(email.trim(), pin.trim());
+      if (success) {
+        setLoggedIn(true);
+        setEmail("");
+        setPin("");
+        setError("");
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+      } else {
+        setError("Invalid email or PIN. Check your Supabase admins table.");
+        shakeX.value = withSpring(10, { damping: 2, stiffness: 500 }, () => {
+          shakeX.value = withSpring(0, { damping: 6 });
+        });
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        }
       }
-    } else {
-      setError("Incorrect PIN. Try 1234.");
-      shakeX.value = withSpring(10, { damping: 2, stiffness: 500 }, () => {
-        shakeX.value = withSpring(0, { damping: 6 });
-      });
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
+    } catch {
+      setError("Connection error. Check your Supabase setup.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleLogout = async () => {
     await setAdminLoggedIn(false);
     setLoggedIn(false);
+    setEmail("");
     setPin("");
   };
 
@@ -94,13 +108,25 @@ export default function AdminScreen() {
           </View>
           <Text style={styles.loginTitle}>Admin Access</Text>
           <Text style={styles.loginSubtitle}>
-            Enter your PIN to manage quotes
+            Enter your admin email and PIN
           </Text>
 
-          <Animated.View style={[styles.pinInputContainer, shakeStyle]}>
+          <Animated.View style={[styles.inputContainer, shakeStyle]}>
             <TextInput
-              style={styles.pinInput}
-              placeholder="Enter PIN"
+              style={styles.input}
+              placeholder="Admin email"
+              placeholderTextColor={Colors.light.textTertiary}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={(t) => {
+                setEmail(t);
+                setError("");
+              }}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="PIN"
               placeholderTextColor={Colors.light.textTertiary}
               secureTextEntry
               keyboardType="number-pad"
@@ -118,11 +144,16 @@ export default function AdminScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
-              { opacity: pressed ? 0.9 : 1 },
+              { opacity: pressed || submitting ? 0.8 : 1 },
             ]}
             onPress={handleLogin}
+            disabled={submitting}
           >
-            <Text style={styles.loginButtonText}>Login</Text>
+            {submitting ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={styles.loginButtonText}>Login</Text>
+            )}
           </Pressable>
         </View>
       </View>
@@ -241,27 +272,27 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     marginBottom: 32,
   },
-  pinInputContainer: {
+  inputContainer: {
     width: "100%",
+    gap: 12,
   },
-  pinInput: {
+  input: {
     width: "100%",
     backgroundColor: Colors.light.surface,
     borderRadius: 14,
     padding: 16,
-    fontSize: 18,
-    fontFamily: "DMSans_500Medium",
+    fontSize: 16,
+    fontFamily: "DMSans_400Regular",
     color: Colors.light.text,
-    textAlign: "center",
     borderWidth: 1,
     borderColor: Colors.light.border,
-    letterSpacing: 8,
   },
   errorText: {
     color: Colors.light.danger,
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
     marginTop: 10,
+    textAlign: "center",
   },
   loginButton: {
     width: "100%",

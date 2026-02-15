@@ -12,9 +12,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 import { getQuotes, getCategories, toggleLike } from "@/lib/quote-storage";
-import { Quote } from "@/lib/data";
 import QuoteCard from "@/components/QuoteCard";
 
 export default function HomeScreen() {
@@ -25,12 +25,12 @@ export default function HomeScreen() {
 
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
-  const { data: quotes = [], isLoading } = useQuery<Quote[]>({
+  const { data: quotes = [], isLoading } = useQuery({
     queryKey: ["quotes"],
     queryFn: getQuotes,
   });
 
-  const { data: categories = [] } = useQuery<string[]>({
+  const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
   });
@@ -127,9 +127,7 @@ export default function HomeScreen() {
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>
-              <Ionicons name="search-outline" size={48} color={Colors.light.textTertiary} />
-            </Text>
+            <Ionicons name="search-outline" size={48} color={Colors.light.textTertiary} />
             <Text style={styles.emptyTitle}>No quotes found</Text>
             <Text style={styles.emptyText}>
               Try selecting a different category
@@ -149,8 +147,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-import { Ionicons } from "@expo/vector-icons";
 
 const styles = StyleSheet.create({
   container: {
@@ -222,15 +218,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 60,
     paddingHorizontal: 40,
-  },
-  emptyIcon: {
-    marginBottom: 16,
+    gap: 10,
   },
   emptyTitle: {
     fontSize: 18,
     fontFamily: "DMSans_600SemiBold",
     color: Colors.light.text,
-    marginBottom: 6,
   },
   emptyText: {
     fontSize: 14,

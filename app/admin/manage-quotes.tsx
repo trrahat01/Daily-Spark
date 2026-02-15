@@ -16,13 +16,12 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Colors from "@/constants/colors";
 import { getQuotes, deleteQuote } from "@/lib/quote-storage";
-import { Quote } from "@/lib/data";
 
 export default function ManageQuotesScreen() {
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: quotes = [], isLoading } = useQuery<Quote[]>({
+  const { data: quotes = [], isLoading } = useQuery({
     queryKey: ["quotes"],
     queryFn: getQuotes,
   });
@@ -33,7 +32,7 @@ export default function ManageQuotesScreen() {
     setRefreshing(false);
   }, [queryClient]);
 
-  const handleDelete = (quote: Quote) => {
+  const handleDelete = (quote: { id: string; author: string }) => {
     Alert.alert(
       "Delete Quote",
       `Are you sure you want to delete this quote by ${quote.author}?`,
@@ -57,7 +56,7 @@ export default function ManageQuotesScreen() {
     );
   };
 
-  const handleEdit = (quote: Quote) => {
+  const handleEdit = (quote: { id: string }) => {
     router.push({
       pathname: "/admin/edit-quote",
       params: { id: quote.id },
