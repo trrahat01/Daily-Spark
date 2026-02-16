@@ -68,8 +68,9 @@ export default function AdminScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
       }
-    } catch {
-      setError("Connection error. Check your Supabase setup.");
+    } catch (err: any) {
+      console.error("Login Error:", err);
+      setError(err.message || "Connection error. Check your Supabase setup.");
     } finally {
       setSubmitting(false);
     }
@@ -129,13 +130,12 @@ export default function AdminScreen() {
               placeholder="PIN"
               placeholderTextColor={Colors.light.textTertiary}
               secureTextEntry
-              keyboardType="number-pad"
+              keyboardType="default"
               value={pin}
               onChangeText={(t) => {
                 setPin(t);
                 setError("");
               }}
-              maxLength={10}
             />
           </Animated.View>
 

@@ -1,156 +1,170 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
-import { Quote, Category } from "./data";
 
-const LIKED_KEY = "@daily_spark_liked_ids";
-const ADMIN_LOGGED_IN_KEY = "@daily_spark_admin";
+const ADMIN_KEY = "admin_logged_in";
 
-async function getLikedIds(): Promise<Set<string>> {
-  const raw = await AsyncStorage.getItem(LIKED_KEY);
-  if (!raw) return new Set();
-  return new Set(JSON.parse(raw));
+export async function isAdminLoggedIn() {
+  const val = await AsyncStorage.getItem(ADMIN_KEY);
+  if (val !== "true") return false;
+
+  // Verify we actually have a valid Supabase session
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) {
+    return false;
+  }
+  return true;
 }
 
-async function saveLikedIds(ids: Set<string>): Promise<void> {
-  await AsyncStorage.setItem(LIKED_KEY, JSON.stringify([...ids]));
+export async function setAdminLoggedIn(val: boolean) {
+  if (val) {
+    await AsyncStorage.setItem(ADMIN_KEY, "true");
+  } else {
+    await AsyncStorage.removeItem(ADMIN_KEY);
+    await supabase.auth.signOut();
+  }
 }
 
-export async function getQuotes(): Promise<(Quote & { liked: boolean })[]> {
+export async function adminLogin(email: string, pin: string) {
+  // 1. Attempt to sign in with Supabase Auth
+  // We treat the "PIN" input as the Password.
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: pin,
+  });
+
+  if (error) {
+    console.log("Supabase Auth Error:", error);
+    throw new Error(error.message);
+  }
+
+  if (!data.session?.user) {
+    throw new Error("No session created.");
+  }
+
+  // 2. Check if this user is in the 'admins' table
+  const { data: adminData, error: adminError } = await supabase
+    .from("admins")
+    .select("*")
+    .eq("id", data.session.user.id)
+    .single();
+
+  if (adminError || !adminData) {
+    console.log("Admin Table Error:", adminError);
+    await supabase.auth.signOut();
+    return false;
+  }
+
+  await setAdminLoggedIn(true);
+  return true;
+}
+
+// --- Quote & Favorites Logic ---
+
+export interface Quote {
+  id: string;
+  text: string;
+  author: string;
+  category: string;
+  image_url?: string | null;
+  created_at?: string;
+  is_favorite?: boolean;
+}
+
+const FAVORITES_KEY = "user_favorites";
+
+async function getFavoriteIds(): Promise<string[]> {
+  try {
+    const json = await AsyncStorage.getItem(FAVORITES_KEY);
+    return json ? JSON.parse(json) : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getQuotes(): Promise<Quote[]> {
   const { data, error } = await supabase
     .from("quotes")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  const likedIds = await getLikedIds();
-  return (data || []).map((q: Quote) => ({
+
+  const favIds = await getFavoriteIds();
+  
+  return (data || []).map((q: any) => ({
     ...q,
-    liked: likedIds.has(q.id),
+    is_favorite: favIds.includes(q.id),
   }));
 }
 
-export async function getQuotesByCategory(
-  category: string
-): Promise<(Quote & { liked: boolean })[]> {
-  const all = await getQuotes();
-  if (category === "All") return all;
-  return all.filter((q) => q.category === category);
-}
-
-export async function getFavorites(): Promise<(Quote & { liked: boolean })[]> {
-  const all = await getQuotes();
-  return all.filter((q) => q.liked);
-}
-
-export async function toggleLike(id: string): Promise<void> {
-  const likedIds = await getLikedIds();
-  if (likedIds.has(id)) {
-    likedIds.delete(id);
-  } else {
-    likedIds.add(id);
-  }
-  await saveLikedIds(likedIds);
-}
-
-export async function addQuote(
-  text: string,
-  author: string,
-  category: string
-): Promise<Quote> {
-  const { data, error } = await supabase
-    .from("quotes")
-    .insert({ text, author, category })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function addQuotesBulk(
-  quotes: { text: string; author: string; category: string }[]
-): Promise<number> {
-  const { data, error } = await supabase.from("quotes").insert(quotes).select();
-
-  if (error) throw error;
-  return data?.length || 0;
-}
-
-export async function updateQuote(
-  id: string,
-  text: string,
-  author: string,
-  category: string
-): Promise<void> {
-  const { error } = await supabase
-    .from("quotes")
-    .update({ text, author, category })
-    .eq("id", id);
-
-  if (error) throw error;
-}
-
-export async function deleteQuote(id: string): Promise<void> {
-  const { error } = await supabase.from("quotes").delete().eq("id", id);
-
-  if (error) throw error;
-}
-
 export async function getCategories(): Promise<string[]> {
+  // 1. Try to get from explicit 'categories' table
   const { data, error } = await supabase
     .from("categories")
     .select("name")
     .order("name");
 
-  if (error) throw error;
-  return (data || []).map((c: { name: string }) => c.name);
+  if (!error && data) {
+    return data.map((c: any) => c.name);
+  }
+
+  // 2. Fallback: derive from 'quotes' table if 'categories' table is missing
+  const { data: quotesData } = await supabase
+    .from("quotes")
+    .select("category");
+
+  const categories = Array.from(new Set((quotesData || []).map((item: any) => item.category))).filter(Boolean);
+  return categories.sort();
 }
 
-export async function addCategory(name: string): Promise<string[]> {
-  const { error } = await supabase.from("categories").insert({ name });
-
+export async function addCategory(name: string): Promise<void> {
+  const { error } = await supabase.from("categories").insert([{ name }]);
   if (error) throw error;
-  return getCategories();
 }
 
-export async function deleteCategory(name: string): Promise<string[]> {
-  const { error } = await supabase
-    .from("categories")
-    .delete()
-    .eq("name", name);
-
+export async function deleteCategory(name: string): Promise<void> {
+  const { error } = await supabase.from("categories").delete().eq("name", name);
   if (error) throw error;
-  return getCategories();
 }
 
-export async function adminLogin(
-  email: string,
-  pin: string
-): Promise<boolean> {
+export async function getFavorites(): Promise<Quote[]> {
+  const favIds = await getFavoriteIds();
+  if (favIds.length === 0) return [];
+
   const { data, error } = await supabase
-    .from("admins")
-    .select("id")
-    .eq("email", email.trim().toLowerCase())
-    .eq("pin", pin.trim())
-    .maybeSingle();
+    .from("quotes")
+    .select("*")
+    .in("id", favIds);
 
   if (error) throw error;
-  if (data) {
-    await AsyncStorage.setItem(ADMIN_LOGGED_IN_KEY, "true");
-    return true;
-  }
-  return false;
+
+  return (data || []).map((q: any) => ({
+    ...q,
+    is_favorite: true,
+  }));
 }
 
-export async function isAdminLoggedIn(): Promise<boolean> {
-  const val = await AsyncStorage.getItem(ADMIN_LOGGED_IN_KEY);
-  return val === "true";
-}
-
-export async function setAdminLoggedIn(loggedIn: boolean): Promise<void> {
-  if (loggedIn) {
-    await AsyncStorage.setItem(ADMIN_LOGGED_IN_KEY, "true");
+export async function toggleLike(id: string): Promise<void> {
+  const favIds = await getFavoriteIds();
+  let newFavIds;
+  
+  if (favIds.includes(id)) {
+    newFavIds = favIds.filter((favId) => favId !== id);
   } else {
-    await AsyncStorage.removeItem(ADMIN_LOGGED_IN_KEY);
+    newFavIds = [...favIds, id];
   }
+  
+  await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavIds));
+}
+
+export async function addQuote(text: string, author: string, category: string): Promise<void> {
+  const { error } = await supabase.from("quotes").insert([
+    {
+      text,
+      author,
+      category,
+    },
+  ]);
+
+  if (error) throw error;
 }
