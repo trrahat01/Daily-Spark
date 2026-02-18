@@ -7,6 +7,7 @@ import { Platform, StyleSheet, useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import Colors from "@/constants/colors";
+import { IS_USER_APP } from "@/lib/app-variant";
 
 function NativeTabLayout() {
   return (
@@ -19,10 +20,12 @@ function NativeTabLayout() {
         <Icon sf={{ default: "heart", selected: "heart.fill" }} />
         <Label>Favorites</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="admin">
-        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
-        <Label>Admin</Label>
-      </NativeTabs.Trigger>
+      {!IS_USER_APP && (
+        <NativeTabs.Trigger name="admin">
+          <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
+          <Label>Admin</Label>
+        </NativeTabs.Trigger>
+      )}
     </NativeTabs>
   );
 }
@@ -95,19 +98,21 @@ function ClassicTabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="admin"
-        options={{
-          title: "Admin",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "settings" : "settings-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
+      {!IS_USER_APP && (
+        <Tabs.Screen
+          name="admin"
+          options={{
+            title: "Admin",
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "settings" : "settings-outline"}
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }

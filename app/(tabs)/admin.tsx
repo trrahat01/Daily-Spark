@@ -19,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Colors from "@/constants/colors";
 import { isAdminLoggedIn, setAdminLoggedIn, adminLogin } from "@/lib/quote-storage";
+import { IS_USER_APP } from "@/lib/app-variant";
 
 export default function AdminScreen() {
   const insets = useSafeAreaInsets();
@@ -32,11 +33,20 @@ export default function AdminScreen() {
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
   useEffect(() => {
+    if (IS_USER_APP) {
+      router.replace("/(tabs)");
+      return;
+    }
+
     isAdminLoggedIn().then((val) => {
       setLoggedIn(val);
       setLoading(false);
     });
   }, []);
+
+  if (IS_USER_APP) {
+    return null;
+  }
 
   const shakeStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: shakeX.value }],
