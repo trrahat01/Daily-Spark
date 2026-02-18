@@ -1,15 +1,11 @@
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn("Supabase URL or Anon Key is missing. Check your .env file.");
-}
+const supabaseUrl = "https://yxrfyzqhwuvuxwdfzcjs.supabase.co";
+const supabaseAnonKey = "sb_publishable_Icw6fX7B1sq5k5ar_9eT4g_2DIXPkfI";
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false, // We use custom PIN auth, not Supabase Auth
+    persistSession: false,
   },
 });

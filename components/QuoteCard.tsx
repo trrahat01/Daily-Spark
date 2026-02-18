@@ -24,7 +24,8 @@ interface QuoteCardProps {
     text: string;
     author: string;
     category: string;
-    liked: boolean;
+    liked?: boolean;
+    is_favorite?: boolean;
   };
   index: number;
   onToggleLike: (id: string) => void;
@@ -74,6 +75,8 @@ export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps
     } catch {}
   };
 
+  const liked = quote.liked ?? quote.is_favorite ?? false;
+
   return (
     <Animated.View style={[styles.card, animatedStyle]}>
       <View style={styles.categoryBadge}>
@@ -88,9 +91,9 @@ export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps
         <Pressable onPress={handleLike} hitSlop={12}>
           <Animated.View style={heartAnimStyle}>
             <Ionicons
-              name={quote.liked ? "heart" : "heart-outline"}
+              name={liked ? "heart" : "heart-outline"}
               size={22}
-              color={quote.liked ? Colors.light.danger : Colors.light.textTertiary}
+              color={liked ? Colors.light.danger : Colors.light.textTertiary}
             />
           </Animated.View>
         </Pressable>

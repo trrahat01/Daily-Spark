@@ -1,18 +1,32 @@
 {
   "cli": {
-    "version": ">= 7.0.0"
+    "version": ">= 7.0.0",
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://yxrfyzqhwuvuxwdfzcjs.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Icw6fX7B1sq5k5ar_9eT4g_2DIXPkfI"
+      }
     },
     "preview": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://yxrfyzqhwuvuxwdfzcjs.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Icw6fX7B1sq5k5ar_9eT4g_2DIXPkfI"
+      },
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://yxrfyzqhwuvuxwdfzcjs.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Icw6fX7B1sq5k5ar_9eT4g_2DIXPkfI"
+      }
+    }
   },
   "submit": {
     "production": {}
