@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Platform,
   ActivityIndicator,
+  Share,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -57,6 +58,37 @@ export default function HomeScreen() {
 
   const allCategories = ["All", ...categories];
 
+  const quoteOfTheDay = useMemo(() => {
+    if (quotes.length === 0) return null;
+
+    const today = new Date();
+    const seed = Number(
+      `${today.getUTCFullYear()}${today.getUTCMonth() + 1}${today.getUTCDate()}`
+    );
+
+    return quotes[seed % quotes.length];
+  }, [quotes]);
+
+  const handleShareQuoteOfTheDay = useCallback(async () => {
+    if (!quoteOfTheDay) return;
+
+    try {
+      await Share.share({
+        message: `"${quoteOfTheDay.text}" - ${quoteOfTheDay.author}\n\nShared via Daily Spark`,
+      });
+    } catch {
+      // No-op when native share sheet is dismissed.
+    }
+  }, [quoteOfTheDay]);
+
+  const handleSurpriseMe = useCallback(() => {
+    const pool = allCategories.filter(Boolean);
+    if (pool.length === 0) return;
+
+    const nextCategory = pool[Math.floor(Math.random() * pool.length)];
+    setSelectedCategory(nextCategory);
+  }, [allCategories]);
+
   const renderHeader = () => (
     <View>
       <LinearGradient
@@ -68,6 +100,22 @@ export default function HomeScreen() {
           Find the inspiration you need today
         </Text>
       </LinearGradient>
+
+      {quoteOfTheDay && (
+        <View style={styles.dailyCard}>
+          <View style={styles.dailyHeader}>
+            <Text style={styles.dailyLabel}>Quote of the Day</Text>
+            <Pressable style={styles.dailyShare} onPress={handleShareQuoteOfTheDay}>
+              <Ionicons name="share-social-outline" size={16} color={Colors.light.textSecondary} />
+              <Text style={styles.dailyShareText}>Share</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.dailyText} numberOfLines={3}>
+            "{quoteOfTheDay.text}"
+          </Text>
+          <Text style={styles.dailyAuthor}>- {quoteOfTheDay.author}</Text>
+        </View>
+      )}
 
       <FlatList
         data={allCategories}
@@ -101,6 +149,11 @@ export default function HomeScreen() {
         </Text>
         <Text style={styles.sectionCount}>{filteredQuotes.length} quotes</Text>
       </View>
+
+      <Pressable style={styles.surpriseButton} onPress={handleSurpriseMe}>
+        <Ionicons name="shuffle-outline" size={16} color={Colors.light.accent} />
+        <Text style={styles.surpriseButtonText}>Surprise Me</Text>
+      </Pressable>
     </View>
   );
 
@@ -172,6 +225,50 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_400Regular",
     color: "rgba(255,255,255,0.7)",
   },
+  dailyCard: {
+    marginHorizontal: 20,
+    marginTop: 2,
+    borderRadius: 14,
+    padding: 14,
+    backgroundColor: Colors.light.surface,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+  },
+  dailyHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  dailyLabel: {
+    fontSize: 12,
+    fontFamily: "DMSans_600SemiBold",
+    color: Colors.light.accent,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  dailyShare: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  dailyShareText: {
+    fontSize: 12,
+    fontFamily: "DMSans_500Medium",
+    color: Colors.light.textSecondary,
+  },
+  dailyText: {
+    fontSize: 14,
+    lineHeight: 22,
+    fontFamily: "DMSans_400Regular",
+    color: Colors.light.text,
+  },
+  dailyAuthor: {
+    marginTop: 8,
+    fontSize: 13,
+    fontFamily: "DMSans_500Medium",
+    color: Colors.light.textSecondary,
+  },
   categoryList: {
     paddingHorizontal: 16,
     paddingVertical: 16,
@@ -202,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingBottom: 12,
+    paddingBottom: 8,
   },
   sectionTitle: {
     fontSize: 20,
@@ -213,6 +310,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
     color: Colors.light.textTertiary,
+  },
+  surpriseButton: {
+    marginHorizontal: 20,
+    marginBottom: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    borderRadius: 12,
+    backgroundColor: Colors.light.surface,
+    paddingVertical: 10,
+  },
+  surpriseButtonText: {
+    fontSize: 13,
+    fontFamily: "DMSans_600SemiBold",
+    color: Colors.light.accent,
   },
   emptyState: {
     alignItems: "center",
