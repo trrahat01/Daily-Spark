@@ -41,6 +41,7 @@
     "expo-linking": "~8.0.12",
     "expo-location": "~19.0.8",
     "expo-router": "~6.0.23",
+    "expo-sharing": "^57.0.10",
     "expo-splash-screen": "~31.0.12",
     "expo-status-bar": "~3.0.9",
     "expo-symbols": "~1.0.8",
@@ -61,6 +62,7 @@
     "react-native-screens": "~4.16.0",
     "react-native-svg": "15.12.1",
     "react-native-url-polyfill": "^3.0.0",
+    "react-native-view-shot": "^5.1.1",
     "react-native-web": "^0.21.0",
     "tsx": "^4.20.6",
     "ws": "^8.18.0",
@@ -79,5 +81,6 @@
     "patch-package": "^8.0.0",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "license": "UNLICENSED"
 }

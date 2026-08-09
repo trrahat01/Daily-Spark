@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
-  Share,
   Platform,
   Alert,
 } from "react-native";
@@ -18,6 +17,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import Colors from "@/constants/colors";
+import QuoteShareModal from "./QuoteShareModal";
 
 interface QuoteCardProps {
   quote: {
@@ -57,6 +57,8 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
     transform: [{ scale: heartScale.value }],
   }));
 
+  const [shareVisible, setShareVisible] = useState(false);
+
   const handleLike = () => {
     heartScale.value = withSpring(1.3, { damping: 4, stiffness: 300 }, () => {
       heartScale.value = withSpring(1, { damping: 6 });
@@ -67,15 +69,11 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
     onToggleLike(quote.id);
   };
 
-  const handleShare = async () => {
+  const handleShare = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    try {
-      await Share.share({
-        message: `"${quote.text}" - ${quote.author}\n\nShared via Daily Spark`,
-      });
-    } catch {}
+    setShareVisible(true);
   };
 
   const handleHide = () => {
@@ -134,6 +132,12 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
           </Pressable>
         ) : null}
       </View>
+
+      <QuoteShareModal
+        visible={shareVisible}
+        quote={quote}
+        onClose={() => setShareVisible(false)}
+      />
     </Animated.View>
   );
 }

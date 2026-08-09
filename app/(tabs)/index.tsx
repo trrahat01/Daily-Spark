@@ -8,7 +8,6 @@ import {
   RefreshControl,
   Platform,
   ActivityIndicator,
-  Share,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 import { getQuotes, getCategories, toggleLike, hideQuote } from "@/lib/quote-storage";
 import QuoteCard from "@/components/QuoteCard";
+import QuoteShareModal from "@/components/QuoteShareModal";
 import AdBanner from "@/components/AdBanner";
 import { trackInterstitialCheckpoint } from "@/lib/ads";
 import { useLanguage } from "@/lib/language-context";
@@ -27,6 +27,7 @@ export default function HomeScreen() {
   const { language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [refreshing, setRefreshing] = useState(false);
+  const [shareQotd, setShareQotd] = useState(false);
 
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
@@ -82,16 +83,9 @@ export default function HomeScreen() {
     return quotes[seed % quotes.length];
   }, [quotes]);
 
-  const handleShareQuoteOfTheDay = useCallback(async () => {
+  const handleShareQuoteOfTheDay = useCallback(() => {
     if (!quoteOfTheDay) return;
-
-    try {
-      await Share.share({
-        message: `"${quoteOfTheDay.text}" - ${quoteOfTheDay.author}\n\nShared via Daily Spark`,
-      });
-    } catch {
-      // No-op when native share sheet is dismissed.
-    }
+    setShareQotd(true);
   }, [quoteOfTheDay]);
 
   const handleSurpriseMe = useCallback(() => {
@@ -216,6 +210,11 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       />
       <AdBanner />
+      <QuoteShareModal
+        visible={shareQotd}
+        quote={quoteOfTheDay}
+        onClose={() => setShareQotd(false)}
+      />
     </View>
   );
 }

@@ -17,7 +17,7 @@ import Colors from "@/constants/colors";
 import { useLanguage } from "@/lib/language-context";
 
 const PRIVACY_POLICY_URL =
-  "https://sites.google.com/view/daily-spark-privacy";
+  "https://trrahat01.github.io/daily-spark-privacy/";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();

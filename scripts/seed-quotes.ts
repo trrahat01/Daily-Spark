@@ -24,7 +24,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { Pool } from "pg";
 
-const TARGET_DEFAULT = 100_000;
+const TARGET_DEFAULT = 250_000;
 const BATCH = 500;
 const DATABASE_URL = (
   process.env.DATABASE_URL ||
@@ -69,7 +69,7 @@ const CATEGORIES = [
   "Hope",
 ];
 
-const ENDINGS = ["", ".", "...", ", always.", "!", " — always."];
+const ENDINGS = ["", ".", "...", ", always.", "!", " — always.", " — always.", " — truly.", ", without fail.", " — and keep going."];
 
 interface LangData {
   actioners: string[];
@@ -80,7 +80,7 @@ interface LangData {
 
 const LANG_DATA: Record<string, LangData> = {
   English: {
-    actioners: ["you", "we", "those who persist", "all of us", "people who care", "dreamers"],
+    actioners: ["you", "we", "those who persist", "all of us", "people who care", "dreamers", "the determined", "anyone brave enough", "the patient", "champions at heart"],
     single: [
       "The road brightens when ${a} choose to ${t}${e}",
       "Never forget that ${a} can always ${t}${e}",
@@ -88,12 +88,20 @@ const LANG_DATA: Record<string, LangData> = {
       "In this moment, ${a} have the power to ${t}${e}",
       "What matters most is that ${a} keep learning to ${t}${e}",
       "There is quiet strength in the choice to ${t}${e}",
+      "When ${a} choose to ${t}, everything begins to shift${e}",
+      "Nothing holds ${a} back when you decide to ${t}${e}",
+      "The world yields to ${a} who keep choosing to ${t}${e}",
+      "Every step ${a} take toward ${t} makes you stronger${e}",
     ],
     double: [
       "To ${t} and to ${u}, that is how ${a} move forward${e}",
       "${a} grow the most when they learn to ${t} and dare to ${u}${e}",
       "The wise path is to ${t} while never stopping the effort to ${u}${e}",
       "${a} become unstoppable by choosing to ${t} and continuing to ${u}${e}",
+      "When ${a} commit to ${t} and hold onto the will to ${u}, nothing can stop you${e}",
+      "To master ${t} and to keep the flame of ${u} alive, that is the true victory${e}",
+      "${a} turn obstacles into fuel by choosing to ${t} and remembering to ${u}${e}",
+      "The strongest hearts choose to ${t} today and to ${u} every single tomorrow${e}",
     ],
     themes: {
       Motivation: ["start small and keep moving", "turn effort into progress", "build momentum one step at a time", "choose action over doubt", "shape each day with purpose", "stay consistent when it counts"],
@@ -207,6 +215,24 @@ const LANG_DATA: Record<string, LangData> = {
   "Ancient Wisdom",
   "Modern Thought",
   "The Quiet Compass",
+  "Inspired Minds",
+  "Luminous Hearts",
+  "The Ever-Wise",
+  "A Silent Voice",
+  "Timeless Insight",
+  "The Inner Flame",
+  "Wisdom Seekers",
+  "Pathfinders",
+  "The Gentle Spirit",
+  "Words of Light",
+  "The Thoughtful Soul",
+  "Everyday Heroes",
+  "The Dreamer Within",
+  "Quiet Courage",
+  "The Bright Thinker",
+  "Harmony of Heart",
+  "Golden Hours",
+  "The Eternal Learner",
 ];
 
 function buildQuote(rand: () => number, lang: string, category: string): string {
