@@ -9,7 +9,7 @@ module.exports = ({ config }) => {
     name: isUserApp
       ? "Daily Spark – Motivational Quotes & Daily Inspiration"
       : "Daily Spark Admin",
-    slug: "daily-spark-motivational-quotes",
+    slug: "daily-spark",
     scheme: isUserApp ? "dailyspark" : "dailysparkadmin",
     ios: {
       ...baseConfig.ios,

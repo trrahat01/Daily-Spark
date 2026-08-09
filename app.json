@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Daily Spark – Motivational Quotes & Daily Inspiration",
-    "slug": "daily-spark-motivational-quotes",
+    "slug": "daily-spark",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
