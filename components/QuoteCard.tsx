@@ -6,6 +6,7 @@ import {
   Pressable,
   Share,
   Platform,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -29,9 +30,10 @@ interface QuoteCardProps {
   };
   index: number;
   onToggleLike: (id: string) => void;
+  onHide?: (id: string) => void;
 }
 
-export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps) {
+export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteCardProps) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
   const heartScale = useSharedValue(1);
@@ -43,6 +45,7 @@ export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps
       translateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.quad) });
     }, delay);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -75,6 +78,21 @@ export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps
     } catch {}
   };
 
+  const handleHide = () => {
+    if (Platform.OS === "web") {
+      onHide?.(quote.id);
+      return;
+    }
+    Alert.alert(
+      "Hide this quote?",
+      "It will be removed from your feed only. Other users will still see it.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Hide", style: "destructive", onPress: () => onHide?.(quote.id) },
+      ]
+    );
+  };
+
   const liked = quote.liked ?? quote.is_favorite ?? false;
 
   return (
@@ -105,6 +123,16 @@ export default function QuoteCard({ quote, index, onToggleLike }: QuoteCardProps
             color={Colors.light.textTertiary}
           />
         </Pressable>
+
+        {onHide ? (
+          <Pressable onPress={handleHide} hitSlop={12}>
+            <Ionicons
+              name="eye-off-outline"
+              size={22}
+              color={Colors.light.textTertiary}
+            />
+          </Pressable>
+        ) : null}
       </View>
     </Animated.View>
   );

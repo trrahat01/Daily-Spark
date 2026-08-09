@@ -26,17 +26,11 @@ async function tryLegacyAdminLogin(email: string, pin: string): Promise<boolean>
       /admins\.(email|pin)\s+does\s+not\s+exist/i.test(message) ||
       /Could not find the '(email|pin)' column/i.test(message);
 
-    if (missingLegacyColumns) {
-      return false;
-    }
-
+    if (missingLegacyColumns) return false;
     throw new Error(message);
   }
 
-  if (!data) {
-    return false;
-  }
-
+  if (!data) return false;
   await persistAdminSession("legacy_table");
   return true;
 }
@@ -46,11 +40,8 @@ export async function isAdminLoggedIn() {
   if (val !== "true") return false;
 
   const mode = await AsyncStorage.getItem(ADMIN_AUTH_MODE_KEY);
-  if (mode === "legacy_table") {
-    return true;
-  }
+  if (mode === "legacy_table") return true;
 
-  // For Supabase Auth mode, verify we still have a valid session.
   const { data } = await supabase.auth.getSession();
   if (!data.session) {
     await AsyncStorage.multiRemove([ADMIN_KEY, ADMIN_AUTH_MODE_KEY]);
@@ -72,7 +63,6 @@ export async function adminLogin(email: string, pin: string) {
   const normalizedEmail = email.trim().toLowerCase();
   const normalizedPin = pin.trim();
 
-  // 1. Try Supabase Auth first (email + pin-as-password setup).
   const { data, error } = await supabase.auth.signInWithPassword({
     email: normalizedEmail,
     password: normalizedPin,
@@ -83,15 +73,11 @@ export async function adminLogin(email: string, pin: string) {
     if (/invalid login credentials/i.test(message)) {
       return tryLegacyAdminLogin(normalizedEmail, normalizedPin);
     }
-    console.log("Supabase Auth Error:", error);
     throw new Error(message);
   }
 
-  if (!data.session?.user) {
-    throw new Error("No session created.");
-  }
+  if (!data.session?.user) throw new Error("No session created.");
 
-  // 2. Check if this signed-in user exists in the admins table.
   const { data: adminData, error: adminError } = await supabase
     .from("admins")
     .select("id")
@@ -100,7 +86,6 @@ export async function adminLogin(email: string, pin: string) {
 
   if (adminError) {
     await supabase.auth.signOut();
-    console.log("Admin Table Error:", adminError);
     throw new Error(adminError.message ?? "Admin verification failed.");
   }
 
@@ -113,20 +98,28 @@ export async function adminLogin(email: string, pin: string) {
   return true;
 }
 
-// --- Quote & Favorites Logic ---
-
 export interface Quote {
   id: string;
   text: string;
   author: string;
   category: string;
+  language?: string;
   image_url?: string | null;
   created_at?: string;
   is_favorite?: boolean;
   liked?: boolean;
 }
 
+export type QuoteInput = {
+  text: string;
+  author: string;
+  category: string;
+  language?: string;
+  image_url?: string | null;
+};
+
 const FAVORITES_KEY = "user_favorites";
+const HIDDEN_KEY = "hidden_quotes";
 
 async function getFavoriteIds(): Promise<string[]> {
   try {
@@ -137,40 +130,77 @@ async function getFavoriteIds(): Promise<string[]> {
   }
 }
 
-export async function getQuotes(): Promise<Quote[]> {
-  const { data, error } = await supabase
-    .from("quotes")
-    .select("*")
-    .order("created_at", { ascending: false });
+async function getHiddenIds(): Promise<string[]> {
+  try {
+    const json = await AsyncStorage.getItem(HIDDEN_KEY);
+    return json ? JSON.parse(json) : [];
+  } catch {
+    return [];
+  }
+}
 
+/**
+ * Hides a quote from THIS device only (per-user, local). The quote stays in the
+ * database and remains visible to every other user.
+ */
+export async function hideQuote(id: string): Promise<void> {
+  const ids = await getHiddenIds();
+  if (!ids.includes(id)) {
+    await AsyncStorage.setItem(HIDDEN_KEY, JSON.stringify([...ids, id]));
+  }
+}
+
+/** Restores a previously hidden quote to this device's feed. */
+export async function unhideQuote(id: string): Promise<void> {
+  const ids = await getHiddenIds();
+  await AsyncStorage.setItem(
+    HIDDEN_KEY,
+    JSON.stringify(ids.filter((hid) => hid !== id))
+  );
+}
+
+export async function getHiddenQuoteIds(): Promise<string[]> {
+  return getHiddenIds();
+}
+
+/**
+ * Fetches quotes from Supabase. `language` filters to a single language (omit
+ * to load everything), and quotes hidden on this device are excluded.
+ */
+export async function getQuotes(language?: string): Promise<Quote[]> {
+  const favIds = await getFavoriteIds();
+  const hiddenIds = await getHiddenIds();
+  const favSet = new Set(favIds);
+  const hiddenSet = new Set(hiddenIds);
+
+  let query = supabase.from("quotes").select("*");
+  if (language) {
+    query = query.eq("language", language);
+  }
+  const { data, error } = await query.order("created_at", { ascending: false });
   if (error) throw error;
 
-  const favIds = await getFavoriteIds();
-  
-  return (data || []).map((q: any) => ({
-    ...q,
-    is_favorite: favIds.includes(q.id),
-    liked: favIds.includes(q.id),
-  }));
+  return (data || [])
+    .filter((q: any) => !hiddenSet.has(String(q.id)))
+    .map((q: any) => ({
+      ...q,
+      is_favorite: favSet.has(String(q.id)),
+      liked: favSet.has(String(q.id)),
+    }));
 }
 
 export async function getCategories(): Promise<string[]> {
-  // 1. Try to get from explicit 'categories' table
   const { data, error } = await supabase
     .from("categories")
     .select("name")
     .order("name");
 
-  if (!error && data) {
-    return data.map((c: any) => c.name);
-  }
+  if (!error && data && data.length) return data.map((c: any) => c.name);
 
-  // 2. Fallback: derive from 'quotes' table if 'categories' table is missing
-  const { data: quotesData } = await supabase
-    .from("quotes")
-    .select("category");
-
-  const categories = Array.from(new Set((quotesData || []).map((item: any) => item.category))).filter(Boolean);
+  const { data: quotesData } = await supabase.from("quotes").select("category");
+  const categories = Array.from(
+    new Set((quotesData || []).map((item: any) => item.category))
+  ).filter(Boolean) as string[];
   return categories.sort();
 }
 
@@ -184,6 +214,23 @@ export async function deleteCategory(name: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function updateCategoryName(oldName: string, newName: string) {
+  const normalized = newName.trim();
+  if (!normalized) throw new Error("Category name is required.");
+
+  const { error: categoryError } = await supabase
+    .from("categories")
+    .update({ name: normalized })
+    .eq("name", oldName);
+  if (categoryError) throw categoryError;
+
+  const { error: quoteError } = await supabase
+    .from("quotes")
+    .update({ category: normalized })
+    .eq("category", oldName);
+  if (quoteError) throw quoteError;
+}
+
 export async function getFavorites(): Promise<Quote[]> {
   const favIds = await getFavoriteIds();
   if (favIds.length === 0) return [];
@@ -192,7 +239,6 @@ export async function getFavorites(): Promise<Quote[]> {
     .from("quotes")
     .select("*")
     .in("id", favIds);
-
   if (error) throw error;
 
   return (data || []).map((q: any) => ({
@@ -204,45 +250,40 @@ export async function getFavorites(): Promise<Quote[]> {
 
 export async function toggleLike(id: string): Promise<void> {
   const favIds = await getFavoriteIds();
-  let newFavIds;
-  
-  if (favIds.includes(id)) {
-    newFavIds = favIds.filter((favId) => favId !== id);
-  } else {
-    newFavIds = [...favIds, id];
-  }
-  
+  const newFavIds = favIds.includes(id)
+    ? favIds.filter((favId) => favId !== id)
+    : [...favIds, id];
   await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavIds));
 }
 
 export async function addQuote(text: string, author: string, category: string): Promise<void> {
+  await addQuoteRecord({ text, author, category });
+}
+
+export async function addQuoteRecord(quote: QuoteInput): Promise<void> {
   const { error } = await supabase.from("quotes").insert([
     {
-      text,
-      author,
-      category,
+      text: quote.text,
+      author: quote.author,
+      category: quote.category,
+      language: quote.language || "English",
+      image_url: quote.image_url || null,
     },
   ]);
-
   if (error) throw error;
 }
 
-export async function addQuotesBulk(
-  quotes: { text: string; author: string; category: string }[]
-): Promise<number> {
-  if (quotes.length === 0) {
-    return 0;
-  }
-
+export async function addQuotesBulk(quotes: QuoteInput[]): Promise<number> {
+  if (quotes.length === 0) return 0;
   const payload = quotes.map((quote) => ({
     text: quote.text,
     author: quote.author,
     category: quote.category,
+    language: quote.language || "English",
+    image_url: quote.image_url || null,
   }));
-
   const { error } = await supabase.from("quotes").insert(payload);
   if (error) throw error;
-
   return payload.length;
 }
 
@@ -250,17 +291,31 @@ export async function updateQuote(
   id: string,
   text: string,
   author: string,
-  category: string
+  category: string,
+  image_url?: string | null
 ): Promise<void> {
   const { error } = await supabase
     .from("quotes")
-    .update({ text, author, category })
+    .update({ text, author, category, image_url: image_url || null })
     .eq("id", id);
-
   if (error) throw error;
 }
 
 export async function deleteQuote(id: string): Promise<void> {
   const { error } = await supabase.from("quotes").delete().eq("id", id);
   if (error) throw error;
+}
+
+export async function deleteQuotesBulk(ids: string[]): Promise<number> {
+  if (ids.length === 0) return 0;
+  const { error } = await supabase.from("quotes").delete().in("id", ids);
+  if (error) throw error;
+  return ids.length;
+}
+
+export async function updateQuotesCategoryBulk(ids: string[], category: string): Promise<number> {
+  if (ids.length === 0) return 0;
+  const { error } = await supabase.from("quotes").update({ category }).in("id", ids);
+  if (error) throw error;
+  return ids.length;
 }

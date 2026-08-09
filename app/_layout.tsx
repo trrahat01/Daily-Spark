@@ -6,6 +6,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
+import { IS_USER_APP } from "@/lib/app-variant";
+import { LanguageProvider } from "@/lib/language-context";
+import { initAds } from "@/lib/ads";
 import {
   useFonts,
   DMSans_400Regular,
@@ -20,30 +23,6 @@ function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerBackTitle: "Back" }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="admin/dashboard"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="admin/add-quote"
-        options={{ title: "Add Quote", headerBackTitle: "Back" }}
-      />
-      <Stack.Screen
-        name="admin/bulk-upload"
-        options={{ title: "Bulk Upload", headerBackTitle: "Back" }}
-      />
-      <Stack.Screen
-        name="admin/edit-quote"
-        options={{ title: "Edit Quote", headerBackTitle: "Back" }}
-      />
-      <Stack.Screen
-        name="admin/categories"
-        options={{ title: "Categories", headerBackTitle: "Back" }}
-      />
-      <Stack.Screen
-        name="admin/manage-quotes"
-        options={{ title: "Manage Quotes", headerBackTitle: "Back" }}
-      />
     </Stack>
   );
 }
@@ -62,16 +41,25 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  useEffect(() => {
+    if (IS_USER_APP) {
+      // Best-effort AdMob init; never blocks or throws in Expo Go / web.
+      void initAds();
+    }
+  }, []);
+
   if (!fontsLoaded) return null;
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView>
-          <KeyboardProvider>
-            <RootLayoutNav />
-          </KeyboardProvider>
-        </GestureHandlerRootView>
+        <LanguageProvider>
+          <GestureHandlerRootView>
+            <KeyboardProvider>
+              <RootLayoutNav />
+            </KeyboardProvider>
+          </GestureHandlerRootView>
+        </LanguageProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

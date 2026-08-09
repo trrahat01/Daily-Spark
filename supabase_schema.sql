@@ -7,9 +7,17 @@ create table if not exists public.quotes (
   text text not null,
   author text not null,
   category text not null,
+  language text not null default 'English',
   image_url text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- For existing databases created before multi-language support:
+alter table public.quotes add column if not exists language text not null default 'English';
+
+-- Faster per-language / per-category lookups.
+create index if not exists quotes_language_idx on public.quotes (language);
+create index if not exists quotes_category_idx on public.quotes (category);
 
 -- 2. Categories Table
 create table if not exists public.categories (

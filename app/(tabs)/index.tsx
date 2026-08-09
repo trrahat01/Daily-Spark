@@ -15,20 +15,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
-import { getQuotes, getCategories, toggleLike } from "@/lib/quote-storage";
+import { getQuotes, getCategories, toggleLike, hideQuote } from "@/lib/quote-storage";
 import QuoteCard from "@/components/QuoteCard";
+import AdBanner from "@/components/AdBanner";
+import { trackInterstitialCheckpoint } from "@/lib/ads";
+import { useLanguage } from "@/lib/language-context";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [refreshing, setRefreshing] = useState(false);
 
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
   const { data: quotes = [], isLoading } = useQuery({
-    queryKey: ["quotes"],
-    queryFn: getQuotes,
+    queryKey: ["quotes", language],
+    queryFn: () => getQuotes(language),
   });
 
   const { data: categories = [] } = useQuery({
@@ -44,6 +48,15 @@ export default function HomeScreen() {
     },
   });
 
+  // Hides a quote from THIS user's feed only. It remains in the database for
+  // every other user.
+  const hideMutation = useMutation({
+    mutationFn: hideQuote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quotes"] });
+    },
+  });
+
   const filteredQuotes =
     selectedCategory === "All"
       ? quotes
@@ -56,7 +69,7 @@ export default function HomeScreen() {
     setRefreshing(false);
   }, [queryClient]);
 
-  const allCategories = ["All", ...categories];
+  const allCategories = useMemo(() => ["All", ...categories], [categories]);
 
   const quoteOfTheDay = useMemo(() => {
     if (quotes.length === 0) return null;
@@ -87,6 +100,7 @@ export default function HomeScreen() {
 
     const nextCategory = pool[Math.floor(Math.random() * pool.length)];
     setSelectedCategory(nextCategory);
+    trackInterstitialCheckpoint();
   }, [allCategories]);
 
   const renderHeader = () => (
@@ -111,7 +125,7 @@ export default function HomeScreen() {
             </Pressable>
           </View>
           <Text style={styles.dailyText} numberOfLines={3}>
-            "{quoteOfTheDay.text}"
+            &quot;{quoteOfTheDay.text}&quot;
           </Text>
           <Text style={styles.dailyAuthor}>- {quoteOfTheDay.author}</Text>
         </View>
@@ -125,7 +139,10 @@ export default function HomeScreen() {
         contentContainerStyle={styles.categoryList}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => setSelectedCategory(item)}
+            onPress={() => {
+              setSelectedCategory(item);
+              trackInterstitialCheckpoint();
+            }}
             style={[
               styles.categoryChip,
               selectedCategory === item && styles.categoryChipActive,
@@ -175,6 +192,7 @@ export default function HomeScreen() {
             quote={item}
             index={index}
             onToggleLike={(id) => likeMutation.mutate(id)}
+            onHide={(id) => hideMutation.mutate(id)}
           />
         )}
         ListHeaderComponent={renderHeader}
@@ -197,6 +215,7 @@ export default function HomeScreen() {
         }
         showsVerticalScrollIndicator={false}
       />
+      <AdBanner />
     </View>
   );
 }
