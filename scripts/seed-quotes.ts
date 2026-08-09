@@ -262,12 +262,14 @@ function buildQuote(rand: () => number, lang: string, category: string): string 
 
 function* generate(
   total: number,
-  seedNum: number
+  seedNum: number,
+  existingTexts: Set<string>
 ): Generator<{ text: string; author: string; category: string; language: string }> {
   const rand = mulberry32(seedNum);
   const langs = Object.keys(LANG_DATA);
   let idx = 0;
   const seen = new Set<string>();
+  const globalSeen = new Set<string>();
   let produced = 0;
   let guard = 0;
   while (produced < total && guard < total * 20) {
@@ -277,8 +279,11 @@ function* generate(
     const category = CATEGORIES[Math.floor(rand() * CATEGORIES.length)];
     const text = buildQuote(rand, lang, category);
     const key = `${lang}|${text}`;
-    if (seen.has(key)) continue;
+    // Never re-insert text that already exists in the DB (dedupe across runs),
+    // nor the same text twice within this run (dedupe across languages).
+    if (seen.has(key) || globalSeen.has(text) || existingTexts.has(text)) continue;
     seen.add(key);
+    globalSeen.add(text);
     produced += 1;
     yield {
       text,
@@ -287,6 +292,26 @@ function* generate(
       language: lang,
     };
   }
+}
+
+/** Loads every existing quote text into a Set so the generator can skip them. */
+async function fetchExistingTexts(): Promise<Set<string>> {
+  const set = new Set<string>();
+  const pageSize = 1000;
+  let offset = 0;
+  for (;;) {
+    const { data, error } = await supabase
+      .from("quotes")
+      .select("text")
+      .order("id")
+      .range(offset, offset + pageSize - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    for (const row of data) if (row && row.text) set.add(row.text);
+    if (data.length < pageSize) break;
+    offset += pageSize;
+  }
+  return set;
 }
 
 async function seedCategories(): Promise<void> {
@@ -346,8 +371,12 @@ async function run(): Promise<void> {
     .from("quotes")
     .select("id", { count: "exact", head: true });
   if (countErr) {
-    console.error("Sanity count check failed:", countErr.message);
-    process.exit(1);
+    console.error(
+      "Sanity count check failed:",
+      countErr.message || "(network/auth error — double-check EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY)"
+    );
+    process.exitCode = 1;
+    return;
   }
   const existing = count ?? 0;
   console.log(`Existing quotes in DB: ${existing.toLocaleString()}`);
@@ -359,8 +388,11 @@ async function run(): Promise<void> {
   await applyMigration();
   await seedCategories();
 
+  const existingTexts = await fetchExistingTexts();
+  console.log(`Loaded ${existingTexts.size.toLocaleString()} existing quote texts to dedupe against.`);
+
   const totalToAdd = target - existing;
-  const generator = generate(totalToAdd, seed);
+  const generator = generate(totalToAdd, seed, existingTexts);
   let added = 0;
   let batch: Array<{ text: string; author: string; category: string; language: string }> = [];
 
@@ -395,5 +427,5 @@ async function run(): Promise<void> {
 
 run().catch((err) => {
   console.error(err);
-  process.exit(1);
+  process.exitCode = 1;
 });
