@@ -21,7 +21,7 @@ export default function AdBanner() {
     if (!mod) return;
 
     const size =
-      mod.BannerAdSize?.LARGE_ANCHORED_ADAPTIVE_BANNER ?? mod.BannerAdSize?.BANNER;
+      mod.BannerAdSize?.ANCHORED_ADAPTIVE_BANNER ?? mod.BannerAdSize?.BANNER;
     const unitId = mod.TestIds?.ADAPTIVE_BANNER ?? mod.TestIds?.BANNER;
 
     setBanner({ Component: mod.BannerAd, unitId, size });
