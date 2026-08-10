@@ -70,6 +70,12 @@ npx eas build -p android --profile production-user --clear-cache
 2. Choose: Language **English (United States)**, App name `Daily Spark – Motivational Quotes & Daily Inspiration`, type **App**, **Free**, and **Yes, it contains ads**.
 3. Click **Create app**.
 
+> 🖼️ **Ready store assets** are generated in the project at `assets/publish/`:
+> - `icon-512.png` (512×512 app icon)
+> - `feature-1024x500.png` (1024×500 feature graphic)
+> - `screenshot-1..5.jpg` (720×1650 phone screenshots)
+> Upload these directly in **Store presence → Main store listing**.
+
 ---
 
 ## Step 4 — Set up the store listing
