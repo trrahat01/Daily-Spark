@@ -14,7 +14,8 @@
     "start": "npx expo start",
     "start:offline": "npx expo start --offline",
     "lint": "npx expo lint",
-    "lint:fix": "npx expo lint --fix"
+    "lint:fix": "npx expo lint --fix",
+    "dev:client": "expo start --dev-client"
   },
   "dependencies": {
     "@expo-google-fonts/dm-sans": "^0.4.2",
@@ -31,6 +32,7 @@
     "expo-blur": "~15.0.8",
     "expo-constants": "~18.0.11",
     "expo-crypto": "~15.0.9",
+    "expo-dev-client": "~6.0.21",
     "expo-document-picker": "^14.0.8",
     "expo-font": "~14.0.10",
     "expo-glass-effect": "~0.1.10",
