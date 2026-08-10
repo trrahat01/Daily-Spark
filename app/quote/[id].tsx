@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { go } from "@/lib/navigation";
+import { copyText } from "@/lib/clipboard";
 import { useTheme } from "@/hooks/useTheme";
 import { useFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -41,7 +41,7 @@ export default function QuoteDetailScreen() {
   const copyQuote = async () => {
     if (!quote) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    await Clipboard.setStringAsync(`"${quote.text}" — ${quote.author}`);
+    await copyText(`"${quote.text}" — ${quote.author}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);
   };
