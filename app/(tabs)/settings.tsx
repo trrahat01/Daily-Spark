@@ -9,6 +9,7 @@ import {
   Share,
   Linking,
   Alert,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -148,38 +149,56 @@ export default function SettingsScreen() {
           ))}
         </View>
 
-        {languageOpen && (
-          <View style={styles.languageContainer}>
-            <Text style={styles.languageTitle}>Choose your language</Text>
-            {languages.map((lang) => {
-              const active = lang.code === language;
-              return (
-                <Pressable
-                  key={lang.code}
-                  style={({ pressed }) => [
-                    styles.languageRow,
-                    { opacity: pressed ? 0.6 : 1 },
-                  ]}
-                  onPress={() => {
-                    touch();
-                    setLanguage(lang.code);
-                    setLanguageOpen(false);
-                  }}
-                >
-                  <Text style={styles.languageFlag}>{lang.flag}</Text>
-                  <Text style={styles.languageLabel}>{lang.label}</Text>
-                  {active && (
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={20}
-                      color={c.success}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        )}
+        <Modal
+          visible={languageOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setLanguageOpen(false)}
+        >
+          <Pressable
+            style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.45)" }}
+            onPress={() => setLanguageOpen(false)}
+          >
+            <View
+              style={{
+                backgroundColor: c.surface,
+                borderTopLeftRadius: 22,
+                borderTopRightRadius: 22,
+                padding: 20,
+                paddingBottom: 44,
+              }}
+            >
+              <Text style={[styles.languageTitle, { color: c.textSecondary }]}>
+                Choose your language
+              </Text>
+              {languages.map((lang) => {
+                const active = lang.code === language;
+                return (
+                  <Pressable
+                    key={lang.code}
+                    style={({ pressed }) => [
+                      styles.languageRow,
+                      { borderTopColor: c.border, opacity: pressed ? 0.6 : 1 },
+                    ]}
+                    onPress={() => {
+                      touch();
+                      setLanguage(lang.code);
+                      setLanguageOpen(false);
+                    }}
+                  >
+                    <Text style={styles.languageFlag}>{lang.flag}</Text>
+                    <Text style={[styles.languageLabel, { color: c.textPrimary }]}>
+                      {lang.label}
+                    </Text>
+                    {active && (
+                      <Ionicons name="checkmark-circle" size={20} color={c.success} />
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Modal>
 
         <Text style={styles.footer}>
           Daily Spark is free and supported by ads.

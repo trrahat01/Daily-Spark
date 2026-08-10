@@ -24,7 +24,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { Pool } from "pg";
 
-const TARGET_DEFAULT = 250_000;
+const TARGET_DEFAULT = 350_000;
 const BATCH = 500;
 const DATABASE_URL = (
   process.env.DATABASE_URL ||
