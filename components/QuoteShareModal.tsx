@@ -14,7 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
-const LOGO = require("../../assets/images/splash-icon.png");
+const LOGO = require("../assets/images/splash-icon.png");
 
 interface Props {
   visible: boolean;
