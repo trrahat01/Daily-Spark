@@ -97,15 +97,33 @@ export default function HomeScreen() {
     trackInterstitialCheckpoint();
   }, [allCategories]);
 
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    if (h < 21) return "Good evening";
+    return "Good night";
+  })();
+
+  const nextSpark = useCallback(() => {
+    const pool = allCategories.filter(Boolean);
+    if (!pool.length) return;
+    const idx = Math.max(0, pool.indexOf(selectedCategory));
+    const next = pool[(idx + 1) % pool.length];
+    setSelectedCategory(next);
+    trackInterstitialCheckpoint();
+  }, [allCategories, selectedCategory]);
+
   const renderHeader = () => (
     <View>
       <LinearGradient
         colors={[Colors.light.navy, Colors.light.navyLight, "transparent"]}
         style={[styles.heroGradient, { paddingTop: insets.top + webTopInset + 16 }]}
       >
+        <Text style={styles.heroGreeting}>{greeting}</Text>
         <Text style={styles.heroTitle}>Daily Spark</Text>
         <Text style={styles.heroSubtitle}>
-          Find the inspiration you need today
+          One thought can change your day
         </Text>
       </LinearGradient>
 
@@ -123,6 +141,12 @@ export default function HomeScreen() {
           </Text>
           <Text style={styles.dailyAuthor}>- {quoteOfTheDay.author}</Text>
         </View>
+      )}
+
+      {quoteOfTheDay && (
+        <Pressable style={styles.nextSpark} onPress={nextSpark}>
+          <Text style={styles.nextSparkText}>NEXT SPARK</Text>
+        </Pressable>
       )}
 
       <FlatList
@@ -237,6 +261,28 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_700Bold",
     color: "#FFFFFF",
     marginBottom: 6,
+  },
+  heroGreeting: {
+    fontSize: 15,
+    fontFamily: "DMSans_500Medium",
+    color: "rgba(255,255,255,0.85)",
+    marginBottom: 8,
+  },
+  nextSpark: {
+    alignSelf: "flex-start",
+    marginLeft: 20,
+    marginTop: 4,
+    marginBottom: 14,
+    backgroundColor: Colors.light.navy,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  nextSparkText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontFamily: "DMSans_700Bold",
+    letterSpacing: 0.6,
   },
   heroSubtitle: {
     fontSize: 15,

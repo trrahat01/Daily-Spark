@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Colors from "@/constants/colors";
 import { useLanguage } from "@/lib/language-context";
+import ThemeOptions from "@/components/ThemeOptions";
 
 const PRIVACY_POLICY_URL =
   "https://trrahat01.github.io/daily-spark-privacy/";
@@ -101,6 +102,7 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+        <ThemeOptions />
         <View style={styles.menuContainer}>
           {menuItems.map((item, index) => (
             <Pressable

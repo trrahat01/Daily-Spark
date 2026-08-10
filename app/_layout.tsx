@@ -8,6 +8,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { IS_USER_APP } from "@/lib/app-variant";
 import { LanguageProvider } from "@/lib/language-context";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { initAds } from "@/lib/ads";
 import {
   useFonts,
@@ -21,8 +22,12 @@ SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
   return (
-    <Stack screenOptions={{ headerBackTitle: "Back" }}>
+    <Stack screenOptions={{ headerBackTitle: "Back" }} initialRouteName="onboarding">
+      <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="quote/[id]" options={{ title: "Quote", headerBackTitle: "Back" }} />
+      <Stack.Screen name="category/[id]" options={{ title: "Category", headerBackTitle: "Back" }} />
+      <Stack.Screen name="author/[id]" options={{ title: "Author", headerBackTitle: "Back" }} />
     </Stack>
   );
 }
@@ -53,13 +58,15 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <LanguageProvider>
-          <GestureHandlerRootView>
-            <KeyboardProvider>
-              <RootLayoutNav />
-            </KeyboardProvider>
-          </GestureHandlerRootView>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <GestureHandlerRootView>
+              <KeyboardProvider>
+                <RootLayoutNav />
+              </KeyboardProvider>
+            </GestureHandlerRootView>
+          </LanguageProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
