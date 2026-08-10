@@ -16,7 +16,8 @@ import Animated, {
   withSpring,
   Easing,
 } from "react-native-reanimated";
-import Colors from "@/constants/colors";
+import { ThemeColors } from "@/theme/colors";
+import { useTheme } from "@/hooks/useTheme";
 import QuoteShareModal from "./QuoteShareModal";
 
 interface QuoteCardProps {
@@ -37,6 +38,9 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
   const heartScale = useSharedValue(1);
+  const { theme } = useTheme();
+  const c = theme.colors;
+  const styles = makeStyles(c);
 
   useEffect(() => {
     const delay = Math.min(index * 80, 400);
@@ -109,7 +113,7 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
             <Ionicons
               name={liked ? "heart" : "heart-outline"}
               size={22}
-              color={liked ? Colors.light.danger : Colors.light.textTertiary}
+              color={liked ? c.error : c.textTertiary}
             />
           </Animated.View>
         </Pressable>
@@ -118,7 +122,7 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
           <Ionicons
             name="share-outline"
             size={22}
-            color={Colors.light.textTertiary}
+            color={c.textTertiary}
           />
         </Pressable>
 
@@ -127,7 +131,7 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
             <Ionicons
               name="eye-off-outline"
               size={22}
-              color={Colors.light.textTertiary}
+              color={c.textTertiary}
             />
           </Pressable>
         ) : null}
@@ -142,19 +146,19 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   card: {
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 20,
     marginHorizontal: 20,
     marginBottom: 14,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
   },
   categoryBadge: {
     alignSelf: "flex-start",
-    backgroundColor: Colors.light.accentLight,
+    backgroundColor: c.accentSoft,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,
@@ -163,20 +167,20 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 11,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.accentDark,
+    color: c.accent,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   quoteText: {
     fontSize: 17,
     lineHeight: 26,
-    color: Colors.light.text,
+    color: c.textPrimary,
     fontFamily: "DMSans_400Regular",
     marginBottom: 12,
   },
   authorText: {
     fontSize: 14,
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
     fontFamily: "DMSans_500Medium",
     marginBottom: 16,
   },
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20,
     borderTopWidth: 1,
-    borderTopColor: Colors.light.border,
+    borderTopColor: c.border,
     paddingTop: 14,
   },
 });

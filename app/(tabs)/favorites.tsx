@@ -11,12 +11,16 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from "@/constants/colors";
+import { ThemeColors } from "@/theme/colors";
+import { useTheme } from "@/hooks/useTheme";
 import { getFavorites, toggleLike } from "@/lib/quote-storage";
 import QuoteCard from "@/components/QuoteCard";
 
 export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const c = theme.colors;
+  const styles = makeStyles(c);
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const webTopInset = Platform.OS === "web" ? 67 : 0;
@@ -43,7 +47,7 @@ export default function FavoritesScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator size="large" color={Colors.light.accent} />
+        <ActivityIndicator size="large" color={c.accent} />
       </View>
     );
   }
@@ -72,7 +76,7 @@ export default function FavoritesScreen() {
             <Ionicons
               name="heart-outline"
               size={48}
-              color={Colors.light.textTertiary}
+              color={c.textTertiary}
             />
             <Text style={styles.emptyTitle}>No favorites yet</Text>
             <Text style={styles.emptyText}>
@@ -85,7 +89,7 @@ export default function FavoritesScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.light.accent}
+            tintColor={c.accent}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -94,10 +98,10 @@ export default function FavoritesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
+    backgroundColor: c.background,
   },
   centered: {
     justifyContent: "center",
@@ -106,20 +110,20 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: c.border,
   },
   headerTitle: {
     fontSize: 28,
     fontFamily: "DMSans_700Bold",
-    color: Colors.light.text,
+    color: c.textPrimary,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 14,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   emptyState: {
     alignItems: "center",
@@ -130,12 +134,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.text,
+    color: c.textPrimary,
   },
   emptyText: {
     fontSize: 14,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
     textAlign: "center",
   },
 });

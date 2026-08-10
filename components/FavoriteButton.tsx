@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -37,5 +37,3 @@ export default function FavoriteButton({ active, onPress, quoteId, size = 22, ha
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({});

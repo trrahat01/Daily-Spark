@@ -3,9 +3,9 @@ import { Tabs } from "expo-router";
 import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
-import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import React from "react";
-import Colors from "@/constants/colors";
+import { useTheme } from "@/hooks/useTheme";
 
 function NativeTabLayout() {
   return (
@@ -31,8 +31,8 @@ function NativeTabLayout() {
 }
 
 function ClassicTabLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { theme, effectiveScheme } = useTheme();
+  const isDark = effectiveScheme === "dark";
   const isWeb = Platform.OS === "web";
   const isIOS = Platform.OS === "ios";
 
@@ -40,13 +40,13 @@ function ClassicTabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.light.accent,
-        tabBarInactiveTintColor: Colors.light.textTertiary,
+        tabBarActiveTintColor: theme.colors.accent,
+        tabBarInactiveTintColor: theme.colors.textTertiary,
         tabBarStyle: {
           position: "absolute",
           backgroundColor: isIOS ? "transparent" : isDark ? "#000" : "#fff",
           borderTopWidth: isWeb ? 1 : 0,
-          borderTopColor: Colors.light.border,
+          borderTopColor: theme.colors.border,
           elevation: 0,
           ...(isWeb ? { height: 84 } : {}),
         },

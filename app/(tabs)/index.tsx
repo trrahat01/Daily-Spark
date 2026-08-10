@@ -13,7 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from "@/constants/colors";
+import { ThemeColors } from "@/theme/colors";
+import { useTheme } from "@/hooks/useTheme";
 import { getQuotes, getCategories, toggleLike, hideQuote } from "@/lib/quote-storage";
 import QuoteCard from "@/components/QuoteCard";
 import QuoteShareModal from "@/components/QuoteShareModal";
@@ -23,6 +24,9 @@ import { useLanguage } from "@/lib/language-context";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const c = theme.colors;
+  const styles = makeStyles(c);
   const queryClient = useQueryClient();
   const { language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -117,7 +121,7 @@ export default function HomeScreen() {
   const renderHeader = () => (
     <View>
       <LinearGradient
-        colors={[Colors.light.navy, Colors.light.navyLight, "transparent"]}
+        colors={["#0F1A2E", "#1E2D47", "transparent"]}
         style={[styles.heroGradient, { paddingTop: insets.top + webTopInset + 16 }]}
       >
         <Text style={styles.heroGreeting}>{greeting}</Text>
@@ -132,7 +136,7 @@ export default function HomeScreen() {
           <View style={styles.dailyHeader}>
             <Text style={styles.dailyLabel}>Quote of the Day</Text>
             <Pressable style={styles.dailyShare} onPress={handleShareQuoteOfTheDay}>
-              <Ionicons name="share-social-outline" size={16} color={Colors.light.textSecondary} />
+              <Ionicons name="share-social-outline" size={16} color={c.textSecondary} />
               <Text style={styles.dailyShareText}>Share</Text>
             </Pressable>
           </View>
@@ -186,7 +190,7 @@ export default function HomeScreen() {
       </View>
 
       <Pressable style={styles.surpriseButton} onPress={handleSurpriseMe}>
-        <Ionicons name="shuffle-outline" size={16} color={Colors.light.accent} />
+        <Ionicons name="shuffle-outline" size={16} color={c.accent} />
         <Text style={styles.surpriseButtonText}>Surprise Me</Text>
       </Pressable>
     </View>
@@ -195,7 +199,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator size="large" color={Colors.light.accent} />
+        <ActivityIndicator size="large" color={c.accent} />
       </View>
     );
   }
@@ -216,7 +220,7 @@ export default function HomeScreen() {
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Ionicons name="search-outline" size={48} color={Colors.light.textTertiary} />
+            <Ionicons name="search-outline" size={48} color={c.textTertiary} />
             <Text style={styles.emptyTitle}>No quotes found</Text>
             <Text style={styles.emptyText}>
               Try selecting a different category
@@ -228,7 +232,7 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.light.accent}
+            tintColor={c.accent}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -243,10 +247,10 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
+    backgroundColor: c.background,
   },
   centered: {
     justifyContent: "center",
@@ -273,7 +277,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 4,
     marginBottom: 14,
-    backgroundColor: Colors.light.navy,
+    backgroundColor: "#0F1A2E",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
@@ -294,9 +298,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
     borderRadius: 14,
     padding: 14,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
   },
   dailyHeader: {
     flexDirection: "row",
@@ -307,7 +311,7 @@ const styles = StyleSheet.create({
   dailyLabel: {
     fontSize: 12,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.accent,
+    color: c.accent,
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
@@ -319,19 +323,19 @@ const styles = StyleSheet.create({
   dailyShareText: {
     fontSize: 12,
     fontFamily: "DMSans_500Medium",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   dailyText: {
     fontSize: 14,
     lineHeight: 22,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.text,
+    color: c.textPrimary,
   },
   dailyAuthor: {
     marginTop: 8,
     fontSize: 13,
     fontFamily: "DMSans_500Medium",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   categoryList: {
     paddingHorizontal: 16,
@@ -342,18 +346,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.light.surfaceSecondary,
+    backgroundColor: c.surfaceSecondary,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
   },
   categoryChipActive: {
-    backgroundColor: Colors.light.navy,
-    borderColor: Colors.light.navy,
+    backgroundColor: "#0F1A2E",
+    borderColor: "#0F1A2E",
   },
   categoryChipText: {
     fontSize: 13,
     fontFamily: "DMSans_500Medium",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   categoryChipTextActive: {
     color: "#FFFFFF",
@@ -368,12 +372,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontFamily: "DMSans_700Bold",
-    color: Colors.light.text,
+    color: c.textPrimary,
   },
   sectionCount: {
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textTertiary,
+    color: c.textTertiary,
   },
   surpriseButton: {
     marginHorizontal: 20,
@@ -383,15 +387,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
     borderRadius: 12,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     paddingVertical: 10,
   },
   surpriseButtonText: {
     fontSize: 13,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.accent,
+    color: c.accent,
   },
   emptyState: {
     alignItems: "center",
@@ -402,12 +406,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.text,
+    color: c.textPrimary,
   },
   emptyText: {
     fontSize: 14,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
     textAlign: "center",
   },
 });

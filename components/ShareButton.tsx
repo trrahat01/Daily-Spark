@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, Share } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -16,13 +16,20 @@ export default function ShareButton({ quote, size = 22, onExtra }: Props) {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
-  const handlePress = () => {
-    scale.value = withSpring(0.9, { damping: 8 }, () => scale.value = withSpring(1, { damping: 6 }));
+  const handlePress = async () => {
+    scale.value = withSpring(0.9, { damping: 8 }, () => (scale.value = withSpring(1, { damping: 6 })));
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     if (onExtra) {
+      trackQuoteShared(quote.id);
       onExtra(quote);
       return;
     }
+    try {
+      await Share.share({
+        message: `"${quote.text}" — ${quote.author}\n\nShared from Daily Spark`,
+      });
+    } catch {}
+    trackQuoteShared(quote.id);
   };
 
   return (
@@ -33,5 +40,3 @@ export default function ShareButton({ quote, size = 22, onExtra }: Props) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({});

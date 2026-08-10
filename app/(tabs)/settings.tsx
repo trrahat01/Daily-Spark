@@ -13,15 +13,20 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Colors from "@/constants/colors";
+import { ThemeColors } from "@/theme/colors";
+import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/lib/language-context";
 import ThemeOptions from "@/components/ThemeOptions";
 
 const PRIVACY_POLICY_URL =
   "https://trrahat01.github.io/daily-spark-privacy/";
+const SUPPORT_EMAIL = "trdevworks@gmail.com";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const c = theme.colors;
+  const styles = makeStyles(c);
   const webTopInset = Platform.OS === "web" ? 67 : 0;
   const { language, setLanguage, languages } = useLanguage();
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -64,6 +69,13 @@ export default function SettingsScreen() {
     );
   };
 
+  const contactSupport = async () => {
+    touch();
+    try {
+      await Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Daily Spark Support`);
+    } catch {}
+  };
+
   const menuItems = [
     {
       icon: "language-outline" as const,
@@ -85,6 +97,12 @@ export default function SettingsScreen() {
       title: "Privacy Policy",
       subtitle: "How we handle your data",
       onPress: openPrivacy,
+    },
+    {
+      icon: "mail-outline" as const,
+      title: "Contact Support",
+      subtitle: SUPPORT_EMAIL,
+      onPress: contactSupport,
     },
     {
       icon: "information-circle-outline" as const,
@@ -115,7 +133,7 @@ export default function SettingsScreen() {
               onPress={item.onPress}
             >
               <View style={styles.menuIconContainer}>
-                <Ionicons name={item.icon} size={22} color={Colors.light.accent} />
+                <Ionicons name={item.icon} size={22} color={c.accent} />
               </View>
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{item.title}</Text>
@@ -124,7 +142,7 @@ export default function SettingsScreen() {
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={Colors.light.textTertiary}
+                color={c.textTertiary}
               />
             </Pressable>
           ))}
@@ -154,7 +172,7 @@ export default function SettingsScreen() {
                     <Ionicons
                       name="checkmark-circle"
                       size={20}
-                      color={Colors.light.success}
+                      color={c.success}
                     />
                   )}
                 </Pressable>
@@ -172,28 +190,28 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
+    backgroundColor: c.background,
   },
   header: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: c.border,
   },
   headerTitle: {
     fontSize: 28,
     fontFamily: "DMSans_700Bold",
-    color: Colors.light.text,
+    color: c.textPrimary,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 14,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   content: {
     flex: 1,
@@ -202,12 +220,12 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   menuContainer: {
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     marginHorizontal: 20,
     marginTop: 24,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
     overflow: "hidden",
   },
   menuItem: {
@@ -215,13 +233,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: c.border,
   },
   menuIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: Colors.light.accentLight,
+    backgroundColor: c.accentSoft,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -232,36 +250,36 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: 16,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.text,
+    color: c.textPrimary,
     marginBottom: 2,
   },
   menuSubtitle: {
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textSecondary,
+    color: c.textSecondary,
   },
   footer: {
     fontSize: 13,
     fontFamily: "DMSans_400Regular",
-    color: Colors.light.textTertiary,
+    color: c.textTertiary,
     textAlign: "center",
     marginTop: 28,
     lineHeight: 20,
   },
   languageContainer: {
-    backgroundColor: Colors.light.surface,
+    backgroundColor: c.surface,
     marginHorizontal: 20,
     marginTop: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: c.border,
     overflow: "hidden",
     paddingVertical: 6,
   },
   languageTitle: {
     fontSize: 12,
     fontFamily: "DMSans_600SemiBold",
-    color: Colors.light.textTertiary,
+    color: c.textTertiary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     paddingHorizontal: 16,
@@ -273,7 +291,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.light.border,
+    borderTopColor: c.border,
   },
   languageFlag: {
     fontSize: 18,
@@ -283,6 +301,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontFamily: "DMSans_500Medium",
-    color: Colors.light.text,
+    color: c.textPrimary,
   },
 });

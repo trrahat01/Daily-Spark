@@ -61,4 +61,4 @@ public privacy policy page.
 
 For privacy questions, contact:
 
-`trrahat26@gmail.com`
+`trdevworks@gmail.com`

@@ -11,6 +11,7 @@ export type AccentTheme =
 export interface ThemeColors {
   background: string;
   surface: string;
+  surfaceSecondary: string;
   card: string;
   textPrimary: string;
   textSecondary: string;
@@ -25,6 +26,7 @@ export interface ThemeColors {
 interface BasePalette {
   background: string;
   surface: string;
+  surfaceSecondary: string;
   card: string;
   textPrimary: string;
   textSecondary: string;
@@ -38,6 +40,7 @@ const base: Record<ColorScheme, BasePalette> = {
   light: {
     background: "#F6F5F2",
     surface: "#FFFFFF",
+    surfaceSecondary: "#F0EEE9",
     card: "#FFFFFF",
     textPrimary: "#1A1C20",
     textSecondary: "#5F6572",
@@ -49,6 +52,7 @@ const base: Record<ColorScheme, BasePalette> = {
   dark: {
     background: "#0C1017",
     surface: "#141A24",
+    surfaceSecondary: "#1D2532",
     card: "#1B2230",
     textPrimary: "#F2F4F8",
     textSecondary: "#AAB3C2",
