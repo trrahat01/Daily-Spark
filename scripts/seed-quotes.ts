@@ -206,6 +206,110 @@ const LANG_DATA: Record<string, LangData> = {
       Hope: ["croire que l'aube viendra", "garder une lumière allumée pour demain", "croire que l'histoire n'est pas finie", "s'accrocher à ce qui est encore possible", "se rappeler que les tempêtes nous renforcent", "attendre le cœur ouvert"],
     },
   },
+
+  Bengali: {
+    actioners: [],
+    single: [
+      "রাস্তা আলোকিত হয় যখন তুমি ${t}${e}",
+      "মনে রেখো, তুমি সবসময় পারবে ${t}${e}",
+      "আজই সেই দিন হোক যখন তুমি ${t}${e}",
+      "এই মুহূর্তেই তোমার শক্তি আছে ${t}${e}",
+    ],
+    double: [
+      "${t} এবং ${u} — এভাবেই তুমি এগিয়ে চলো${e}",
+      "সবচেয়ে বেশি বাড়ে সেই মানুষ, যে ${t} শেখে আর ${u} করার সাহস রাখে${e}",
+    ],
+    themes: {
+      Motivation: ["ছোট পদক্ষেপ নিয়ে এগিয়ে যাওয়া", "পরিশ্রমকে অগ্রগতি বানানো", "ভয়ের বদলে কাজ বেছে নেওয়া", "প্রতিদিনকে অর্থবহ করা"],
+      Inspiration: ["প্রতি ভোরে নতুন সুযোগ দেখা", "ক্ষতকে জ্ঞান বানানো", "সীমার ভেতরেও সম্ভাবনা খোঁজা", "স্বপ্নকে আলো বানানো"],
+      Life: ["কোলাহলের মাঝে শান্তি খোঁজা", "যা আছে তাই যথেষ্ট ভাবা", "পেরিয়ে আসা অভিজ্ঞতা দিয়ে বেড়ে ওঠা", "সাধারণ মুহূর্তে সুখ খোঁজা"],
+      Success: ["ধাপে ধাপে এগোনো", "অস্থায়ী ব্যর্থতাকে জয় করা", "অধ্যবসায়কে হাতিয়ার বানানো", "ছোট জয়কে বড় ফল বানানো"],
+      Wisdom: ["বলার আগে মন দিয়ে শোনা", "ধৈর্যের মূল্য বোঝা", "সত্যকে আগে প্রশ্ন করা", "অভিজ্ঞতা দিয়ে বিচার শাণিত করা"],
+      Love: ["হিসাব ছাড়া ভালোবাসা দেওয়া", "নরমভাবে ভালোবাসা দেওয়া", "বোঝার চেষ্টা আগে করা", "প্রিয় মানুষকে কাছে রাখা"],
+      Friendship: ["যে বন্ধু চাই নিজেই সে হওয়া", "সত্যের সঙ্গে ছোট্ট গণ্ডি রাখা", "কঠিন সময়ে পাশে থাকা", "সততা দিয়ে বন্ধুত্ব গড়া"],
+      Happiness: ["ছোট সুখকে বড় করে দেখা", "কৃতজ্ঞতাকে বেছে নেওয়া", "সাধারণ মুহূর্তে হাসা", "যা আছে তা যথেষ্ট মনে করা"],
+      Courage: ["শান্ত শ্বাসে কঠিনকেও মুখোমুখি হওয়া", "ভয় আছে তবুও এগোনো", "নিজের সিদ্ধান্ত নিজে নেওয়া", "পড়ে গিয়ে আবার ওঠা"],
+      Hope: ["ভোর আসবেই বলে বিশ্বাস করা", "আগামীর জন্য একটা আলো জ্বালিয়ে রাখা", "গল্পটা ফুরায়নি মনে করা", "তুফানও পেরিয়ে যাবে বলে ভরসা করা"],
+    },
+  },
+
+  Arabic: {
+    actioners: [],
+    single: [
+      "يضيء الطريق عندما تختار ${t}${e}",
+      "تذكر أنك تستطيع دائماً ${t}${e}",
+      "ليكن اليوم يوماً تبدأ فيه ${t}${e}",
+      "في هذه اللحظة لديك القوة على ${t}${e}",
+    ],
+    double: [
+      "${t} و${u} — هكذا تتقدم${e}",
+      "ينمو أكثر من يتعلم ${t} ويجرؤ على ${u}${e}",
+    ],
+    themes: {
+      Motivation: ["البدء بخطوات صغيرة", "تحويل الجهد إلى تقدم", "اختيار العمل قبل الشك", "جعل كل يوم هادفاً"],
+      Inspiration: ["رؤية فرصة جديدة في كل شروق", "تحويل الجراح إلى حكمة", "رؤية الإمكانات بين الحدود", "تحويل الحلم إلى نور"],
+      Life: ["البحث عن الهدوء وسط الضجيج", "الاكتفاء باليوم", "النمو مما عشته", "البحث عن المعنى في البساطة"],
+      Success: ["قياس التقدم خطوة بخطوة", "تجاوز العقبات المؤقتة", "جعل المثابرة سلاحاً", "تحويل الانتصارات الصغيرة إلى نتائج كبيرة"],
+      Wisdom: ["الاستماع قبل الكلام", "فهم قيمة الصبر", "البحث عن الحقيقة قبل الصواب", "فنّ الحكم من الخبرة"],
+      Love: ["العطاء دون حساب", "اللطف مع من نحب", "فهم الآخر قبل أن يفهمك", "إبقاء الأحبة قريبين"],
+      Friendship: ["أن تكون الصديق الذي تتمنى", "الصدق في العلاقات", "الوقوف في الأوقات الصعبة", "الحفاظ على الرفقة الطيبة"],
+      Happiness: ["الفرح باللحظات الصغيرة", "اختيار الامتنان", "الضحك في اللحظات العادية", "الرضا بما هو متاح"],
+      Courage: ["مواجهة الصعاب بهدوء", "التقدم رغم الخوف", "اتخاذ قراراتك بنفسك", "النهوض بعد كل سقوط"],
+      Hope: ["الثقة بأن الفجر قادم", "إبقاء ضوء للغد", "أن القصة لم تنته", "أن العواصف تصنع القوة"],
+    },
+  },
+
+  Portuguese: {
+    actioners: [],
+    single: [
+      "O caminho brilha quando você ${t}${e}",
+      "Lembre-se que você sempre pode ${t}${e}",
+      "Que hoje seja o dia em que você ${t}${e}",
+      "Neste momento você tem força para ${t}${e}",
+    ],
+    double: [
+      "${t} e ${u} — assim você avança${e}",
+      "Cresce mais quem aprende a ${t} e ousa ${u}${e}",
+    ],
+    themes: {
+      Motivation: ["dar pequenos passos", "transformar esforço em progresso", "escolher a ação antes da dúvida", "dar propósito a cada dia"],
+      Inspiration: ["ver uma nova chance em cada amanhecer", "tornar feridas em sabedoria", "ver possibilidade onde há limite", "fazer do sonho a sua luz"],
+      Life: ["buscar calma no meio do barulho", "viver o hoje com plenitude", "crescer com o que você atravessa", "achar sentido no simples"],
+      Success: ["medir o progresso passo a passo", "superar os recuos temporários", "fazer da constância sua vantagem", "transformar pequenas vitórias em resultados"],
+      Wisdom: ["ouvir antes de falar", "entender o valor da paciência", "buscar a verdade antes do certo", "afinar o julgamento com a experiência"],
+      Love: ["dar sem cobrar", "ser gentil com quem importa", "compreender antes de ser compreendido", "manter perto quem se ama"],
+      Friendship: ["ser o amigo que você gostaria de ter", "manter o círculo pequeno e sincero", "aparecer nas horas difíceis", "honrar a amizade"],
+      Happiness: ["achar alegria nos pequenos instantes", "escolher a gratidão", "sorrir no cotidiano", "se contentar com o que já tem"],
+      Courage: ["enfrentar a dificuldade com calma", "seguir mesmo com medo", "tomar as próprias decisões", "recomeçar após cada queda"],
+      Hope: ["confiar que o amanhecer virá", "manter uma luz acesa para amanhã", "acreditar que a história não acabou", "lembrar que as tempestades nos fortalecem"],
+    },
+  },
+
+  German: {
+    actioners: [],
+    single: [
+      "Der Weg leuchtet auf, wenn du ${t}${e}",
+      "Denk daran, du kannst immer ${t}${e}",
+      "Lass heute der Tag sein, an dem du ${t}${e}",
+      "In diesem Moment hast du die Kraft zu ${t}${e}",
+    ],
+    double: [
+      "${t} und ${u} — so kommst du voran${e}",
+      "Es wächst, wer lernt zu ${t} und wagt zu ${u}${e}",
+    ],
+    themes: {
+      Motivation: ["mit kleinen Schritten beginnen", "Anstrengung in Fortschritt verwandeln", "Handeln statt Zweifeln wählen", "jeden Tag sinnvoll gestalten"],
+      Inspiration: ["in jedem Sonnenaufgang eine neue Chance sehen", "Wunden in Weisheit verwandeln", "Möglichkeiten in den Grenzen sehen", "den Traum zum Licht machen"],
+      Life: ["Ruhe im Lärm finden", "den heutigen Tag genießen", "aus dem wachsen was du durchlebst", "Sinn im Einfachen finden"],
+      Success: ["Fortschritt Schritt für Schritt messen", "vorübergehende Rückschläge überwinden", "Ausdauer zur Stärke machen", "kleine Siege in große Ergebnisse verwandeln"],
+      Wisdom: ["mehr hören als sprechen", "den Wert der Geduld verstehen", "die Wahrheit vor dem Recht suchen", "Urteilsvermögen durch Erfahrung schärfen"],
+      Love: ["ohne zu berechnen geben", "sanft zu den Menschen sein", "verstehen bevor man verstanden wird", "geliebte Menschen nahe halten"],
+      Friendship: ["der Freund sein den du dir wünschst", "den Kreis klein und ehrlich halten", "in schweren Zeiten da sein", "Freundschaft ehren"],
+      Happiness: ["Freude in kleinen Momenten finden", "Dankbarkeit wählen", "im Alltag lächeln", "mit dem zufrieden sein was du hast"],
+      Courage: ["der Schwierigkeit ruhig begegnen", "trotz Angst weitergehen", "eigene Entscheidungen treffen", "nach jedem Fall neu beginnen"],
+      Hope: ["darauf vertrauen dass der Morgen kommt", "ein Licht für morgen brennen lassen", "glauben dass die Geschichte weitergeht", "sich erinnern dass Stürme stärker machen"],
+    },
+  },
 };
 
   const authors = [

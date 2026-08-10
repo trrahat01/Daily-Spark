@@ -1,11 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Quote, BUNDLED_QUOTES } from "@/data/quotes";
+import { Quote } from "@/data/quotes";
 import { getQuotes as fetchRemoteQuotes, getCategories as fetchRemoteCategories } from "@/lib/quote-storage";
 
 const CACHE_KEY = "ds_quote_cache";
 const DAY_KEY = "ds_quote_day";
 const DAILY_KEY = "ds_quote_daily";
 const CATS_KEY = "ds_categories_cache";
+
+/** Single neutral fallback so the daily card never crashes, even fully offline. */
+const NEUTRAL: Quote = {
+  id: "daily-fallback",
+  text: "Every new day is a fresh chance to begin.",
+  author: "Unknown",
+  category: "Motivation",
+};
 
 /** --- cache helpers -------------------------------------------------- */
 
@@ -52,8 +60,8 @@ export async function getQuotes(language?: string): Promise<Quote[]> {
       return remote;
     }
   } catch {}
-  // 3) bundled fallback
-  return BUNDLED_QUOTES;
+  // no offline bundled quotes — return empty if the server isn't reachable
+  return [];
 }
 
 export async function syncQuotes(language?: string): Promise<Quote[]> {
@@ -65,7 +73,7 @@ export async function syncQuotes(language?: string): Promise<Quote[]> {
     }
   } catch {}
   const cached = await loadQuotesFromCache();
-  return cached.length ? cached : BUNDLED_QUOTES;
+  return cached.length ? cached : [];
 }
 
 export async function getQuoteById(id: string): Promise<Quote | undefined> {
@@ -109,9 +117,6 @@ export async function getCategories(): Promise<string[]> {
       await AsyncStorage.setItem(CATS_KEY, JSON.stringify(cats)).catch(() => {});
     }
   } catch {}
-  if (!cats.length) {
-    cats = Array.from(new Set(BUNDLED_QUOTES.map((q) => q.category))).filter(Boolean);
-  }
   return cats.sort();
 }
 
@@ -160,7 +165,7 @@ export async function getDailyQuote(): Promise<Quote> {
   } catch {}
 
   const all = await getQuotes();
-  const pool = all.length ? all : BUNDLED_QUOTES;
+  const pool = all.length ? all : [NEUTRAL];
   const quote = pool[dayIndex(dayKey) % pool.length];
   try {
     await AsyncStorage.multiSet([
