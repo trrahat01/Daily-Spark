@@ -14,6 +14,11 @@ import { Platform } from "react-native";
  *  - and only if an ad is already loaded.
  */
 
+export const ADS_BANNER_UNIT_ID =
+  "ca-app-pub-1463796060515114/1940463708";
+export const ADS_INTERSTITIAL_UNIT_ID =
+  "ca-app-pub-1463796060515114/2924428227";
+
 type AdsModule = typeof import("react-native-google-mobile-ads") | null;
 
 let adsModule: AdsModule = null;
@@ -73,7 +78,7 @@ function ensureInterstitialLoaded(): void {
   if (!mod || interstitialAd) return;
   try {
     interstitialAd = mod.InterstitialAd.createForAdRequest(
-      mod.TestIds.INTERSTITIAL,
+      ADS_INTERSTITIAL_UNIT_ID,
       { requestNonPersonalizedAdsOnly: true }
     );
     interstitialAd.addAdEventListener(mod.AdEventType.LOADED, () => {

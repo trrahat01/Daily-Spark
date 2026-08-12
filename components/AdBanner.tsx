@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { isAdsAvailable, getAdsModule } from "@/lib/ads";
+import { isAdsAvailable, getAdsModule, ADS_BANNER_UNIT_ID } from "@/lib/ads";
 
 /**
  * A small, non-intrusive adaptive banner shown at the bottom of the feed.
@@ -22,7 +22,7 @@ export default function AdBanner() {
 
     const size =
       mod.BannerAdSize?.ANCHORED_ADAPTIVE_BANNER ?? mod.BannerAdSize?.BANNER;
-    const unitId = mod.TestIds?.ADAPTIVE_BANNER ?? mod.TestIds?.BANNER;
+    const unitId = ADS_BANNER_UNIT_ID;
 
     setBanner({ Component: mod.BannerAd, unitId, size });
   }, []);
