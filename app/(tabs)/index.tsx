@@ -19,6 +19,7 @@ import { getQuotes, getCategories, toggleLike, hideQuote } from "@/lib/quote-sto
 import QuoteCard from "@/components/QuoteCard";
 import QuoteShareModal from "@/components/QuoteShareModal";
 import AdBanner from "@/components/AdBanner";
+import StreakCalendar from "@/components/StreakCalendar";
 import { trackInterstitialCheckpoint } from "@/lib/ads";
 import { useLanguage } from "@/lib/language-context";
 
@@ -152,6 +153,8 @@ export default function HomeScreen() {
           <Text style={styles.nextSparkText}>NEXT SPARK</Text>
         </Pressable>
       )}
+
+      <StreakCalendar />
 
       <FlatList
         data={allCategories}

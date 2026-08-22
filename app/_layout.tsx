@@ -11,6 +11,7 @@ import { LanguageProvider } from "@/lib/language-context";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { initAds } from "@/lib/ads";
 import { trackEvent } from "@/services/analytics";
+import { initDailyNotification, watchNotificationResponses } from "@/services/notifications";
 import {
   useFonts,
   DMSans_400Regular,
@@ -48,12 +49,17 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    if (IS_USER_APP) {
-      // Best-effort AdMob init; never blocks or throws in Expo Go / web.
-      void initAds();
-      // Firebase Analytics app-open event (see Firebase Console → Reports).
-      trackEvent("app_open");
-    }
+    if (!IS_USER_APP) return;
+    // Best-effort AdMob init; never blocks or throws in Expo Go / web.
+    void initAds();
+    // Firebase Analytics app-open event (see Firebase Console → Reports).
+    trackEvent("app_open");
+    // Daily reminder + deep-link routing when a notification is tapped.
+    const unwatch = watchNotificationResponses();
+    void initDailyNotification();
+    return () => {
+      if (typeof unwatch === "function") unwatch();
+    };
   }, []);
 
   if (!fontsLoaded) return null;
