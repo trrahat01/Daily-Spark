@@ -1,37 +1,47 @@
 /**
- * Optional analytics abstraction (no-op for now). Wire to a real provider later.
- * Everything here is safe to call anywhere; it never throws or blocks.
+ * Firebase Analytics wrapper (lazy + guarded so it never crashes the app).
+ * Auto-logs `app_open` and `session_start` in Firebase, and these helpers log
+ * custom engagement events. View daily users / events in Firebase Console.
  */
 type Payload = Record<string, unknown> | undefined;
 
-function safe(fn: () => void) {
+// Never import at module scope — the native module may be absent at runtime.
+function getAnalytics(): any {
   try {
-    fn();
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require("@react-native-firebase/analytics");
+    return mod?.default ?? null;
   } catch {
-    // never let analytics break the app
+    return null;
   }
 }
 
+function logEvent(name: string, payload?: Payload): void {
+  const a = getAnalytics();
+  if (!a) return;
+  Promise.resolve(a().logEvent(name, payload ?? {})).catch(() => {});
+}
+
 export function trackQuoteViewed(quoteId: string, payload?: Payload): void {
-  safe(() => {});
+  logEvent("quote_viewed", { quote_id: quoteId, ...(payload ?? {}) });
 }
 
 export function trackQuoteShared(quoteId: string, payload?: Payload): void {
-  safe(() => {});
+  logEvent("quote_shared", { quote_id: quoteId, ...(payload ?? {}) });
 }
 
 export function trackQuoteFavorited(quoteId: string, payload?: Payload): void {
-  safe(() => {});
+  logEvent("quote_favorited", { quote_id: quoteId, ...(payload ?? {}) });
 }
 
 export function trackCategoryOpened(category: string): void {
-  safe(() => {});
+  logEvent("category_opened", { category });
 }
 
 export function trackSearch(query: string): void {
-  safe(() => {});
+  logEvent("search", { search_term: query });
 }
 
 export function trackEvent(name: string, payload?: Payload): void {
-  safe(() => {});
+  logEvent(name, payload);
 }

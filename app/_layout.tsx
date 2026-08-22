@@ -10,6 +10,7 @@ import { IS_USER_APP } from "@/lib/app-variant";
 import { LanguageProvider } from "@/lib/language-context";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { initAds } from "@/lib/ads";
+import { trackEvent } from "@/services/analytics";
 import {
   useFonts,
   DMSans_400Regular,
@@ -50,6 +51,8 @@ export default function RootLayout() {
     if (IS_USER_APP) {
       // Best-effort AdMob init; never blocks or throws in Expo Go / web.
       void initAds();
+      // Firebase Analytics app-open event (see Firebase Console → Reports).
+      trackEvent("app_open");
     }
   }, []);
 
