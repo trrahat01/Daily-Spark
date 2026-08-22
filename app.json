@@ -25,6 +25,7 @@
     "android": {
       "package": "com.dailyspark.quotes",
       "versionCode": 4,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#0F1A2E",
         "foregroundImage": "./assets/images/splash-icon.png"
