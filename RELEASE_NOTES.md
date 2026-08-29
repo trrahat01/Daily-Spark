@@ -1,18 +1,35 @@
 # Daily Spark — Release Notes
 
-## Version 2.3.0 (2026-08-23)
+## Version 2.3.0 (2026-08-29)
 **Build:** Android versionCode `5` · iOS buildNumber `5` · package `com.dailyspark.quotes`
 
 ### ✨ New in this release
-- **❤️ Romantic quotes** — Authentic, emotional quotes about love, first love,
-  long-distance love, soulmates, missing someone, and commitment.
-- **💔 Sad quotes** — Emotional quotes about heartbreak, lost love, separation,
+- **13 native languages, 12 categories** — Quotes are now available in English,
+  Hindi, Spanish, French, German, Arabic, Portuguese, Bengali, Urdu, Indonesian,
+  Japanese, Korean, and Chinese, across categories including Motivational,
+  Inspirational, Life, Success, Wisdom, Love, Friendship, Happiness, Courage, Hope,
+  **Romantic ❤️**, and **Sad 💔**.
+- **Authentic, native content — no machine translation** — Every quote is
+  original to its language/country and is displayed with its home country and
+  original language. An English quote is never automatically translated into
+  another language.
+- **Romantic ❤️ quotes** — emotional quotes about love, first love, long-distance
+  love, soulmates, missing someone, and commitment.
+- **Sad 💔 quotes** — emotional quotes about heartbreak, lost love, separation,
   loneliness, betrayal, regret, and moving on.
-- **Native, country-based content** — Every Romantic/Sad quote is original to its
-  language/country. No quote is machine-translated from English. Each quote carries
-  its home country and original language.
-- All existing features remain: daily reminder, streak calendar, analytics, favorites,
-  search, and multi-language/country filtering.
+- **Categories managed from Supabase** — Category names are stored and managed in
+  the Supabase database and read by the app and seeder at runtime (no hardcoded
+  lists in the app).
+
+### 🔧 Improvements
+- Expanded the quote database with hundreds of thousands of native quotes across
+  all 13 languages and 12 categories.
+- Kept all existing features: daily notification, streak calendar, Firebase
+  Analytics, favorites, share, and language/country filtering.
+
+### 📱 Getting started
+- After updating, allow **notifications** when prompted to get the daily reminder.
+- Choose any language/country in Settings to browse its native quotes.
 
 ---
 
