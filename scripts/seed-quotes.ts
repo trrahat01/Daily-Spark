@@ -931,26 +931,40 @@ async function run(): Promise<void> {
   const clear = (process.env.CLEAR || "").trim().toLowerCase() === "1";
   if (clear && existing > 0) {
     console.log("CLEAR=1 → deleting all existing quotes...");
-    // Delete in pages to avoid a single oversized DELETE.
+    // Fetch IDs in pages, then delete by ID chunks (avoids statement timeouts
+    // from a single bulk DELETE on a large table).
     let deleted = 0;
+    const pageSize = 100;
     for (;;) {
       const { data, error } = await supabase
         .from("quotes")
-        .delete()
-        .neq("id", "00000000-0000-0000-0000-000000000000")
         .select("id")
-        .limit(1000);
+        .order("id")
+        .range(0, pageSize - 1);
       if (error) {
-        console.error("Delete error:", error.message);
+        console.error("Select (for clear) error:", error.message);
         process.exitCode = 1;
         return;
       }
-      const n = data?.length ?? 0;
-      deleted += n;
       if (!data || data.length === 0) break;
+      const ids = data.map((r: any) => r.id);
+      const { error: delErr } = await supabase
+        .from("quotes")
+        .delete()
+        .in("id", ids);
+      if (delErr) {
+        console.error("Delete error:", delErr.message);
+        process.exitCode = 1;
+        return;
+      }
+      deleted += ids.length;
+      if (deleted % 1000 === 0 || ids.length < pageSize) {
+        console.log(`Deleted ${deleted.toLocaleString()}...`);
+      }
+      if (ids.length < pageSize) break;
     }
     existing = 0;
-    console.log(`Deleted ${deleted.toLocaleString()} quotes.`);
+    console.log(`Done deleting ${deleted.toLocaleString()} quotes.`);
   }
 
   if (existing >= target) {
