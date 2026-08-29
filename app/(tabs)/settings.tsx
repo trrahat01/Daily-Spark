@@ -81,7 +81,7 @@ export default function SettingsScreen() {
     {
       icon: "language-outline" as const,
       title: "Language",
-      subtitle: `${currentLang.flag}  ${currentLang.label}`,
+      subtitle: `${currentLang.flag}  ${currentLang.label} · ${currentLang.country}`,
       onPress: () => {
         touch();
         setLanguageOpen((open) => !open);
@@ -187,9 +187,14 @@ export default function SettingsScreen() {
                     }}
                   >
                     <Text style={styles.languageFlag}>{lang.flag}</Text>
-                    <Text style={[styles.languageLabel, { color: c.textPrimary }]}>
-                      {lang.label}
-                    </Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.languageLabel, { color: c.textPrimary }]}>
+                        {lang.label}
+                      </Text>
+                      <Text style={[styles.languageCountry, { color: c.textTertiary }]}>
+                        {lang.country} · {lang.nativeName}
+                      </Text>
+                    </View>
                     {active && (
                       <Ionicons name="checkmark-circle" size={20} color={c.success} />
                     )}
@@ -321,5 +326,10 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     fontSize: 15,
     fontFamily: "DMSans_500Medium",
     color: c.textPrimary,
+  },
+  languageCountry: {
+    fontSize: 12,
+    fontFamily: "DMSans_400Regular",
+    marginTop: 2,
   },
 });

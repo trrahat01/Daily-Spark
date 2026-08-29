@@ -26,6 +26,9 @@ interface QuoteCardProps {
     text: string;
     author: string;
     category: string;
+    country?: string | null;
+    original_language?: string | null;
+    is_original?: boolean;
     liked?: boolean;
     is_favorite?: boolean;
   };
@@ -107,6 +110,14 @@ export default function QuoteCard({ quote, index, onToggleLike, onHide }: QuoteC
 
       <Text style={styles.authorText}>- {quote.author}</Text>
 
+      {quote.country || quote.original_language ? (
+        <Text style={styles.originText}>
+          {quote.country}
+          {quote.original_language ? ` · ${quote.original_language}` : ""}
+          {quote.is_original === false ? " · translated" : " · original"}
+        </Text>
+      ) : null}
+
       <View style={styles.actions}>
         <Pressable onPress={handleLike} hitSlop={12}>
           <Animated.View style={heartAnimStyle}>
@@ -183,6 +194,13 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     color: c.textSecondary,
     fontFamily: "DMSans_500Medium",
     marginBottom: 16,
+  },
+  originText: {
+    fontSize: 12,
+    color: c.textTertiary,
+    fontFamily: "DMSans_400Regular",
+    marginBottom: 16,
+    marginTop: -10,
   },
   actions: {
     flexDirection: "row",

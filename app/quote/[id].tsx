@@ -71,6 +71,13 @@ export default function QuoteDetailScreen() {
           <Pressable onPress={() => go(`/author/${encodeURIComponent(quote.author)}`)}>
             <Text style={[styles.author, { color: c.textSecondary }]}>— {quote.author}</Text>
           </Pressable>
+          {quote.country || quote.original_language ? (
+            <Text style={[styles.origin, { color: c.textTertiary }]}>
+              {quote.country}
+              {quote.original_language ? ` · ${quote.original_language}` : ""}
+              {quote.is_original === false ? " · translated" : " · original"}
+            </Text>
+          ) : null}
           <View style={[styles.divider, { backgroundColor: c.border }]} />
           <View style={styles.actions}>
             <FavoriteButton active={isFavorite(String(quote.id))} onPress={(i) => toggleFavorite(i)} quoteId={String(quote.id)} size={26} haptic />
@@ -111,6 +118,7 @@ const styles = StyleSheet.create({
   category: { fontSize: 12, fontFamily: "DMSans_700Bold", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 14, alignSelf: "flex-start" },
   quote: { fontSize: 22, lineHeight: 34, fontFamily: "DMSans_500Medium", marginBottom: 14 },
   author: { fontSize: 15, fontFamily: "DMSans_500Medium", marginBottom: 18 },
+  origin: { fontSize: 12, fontFamily: "DMSans_400Regular", marginBottom: 18, marginTop: -12 },
   divider: { height: 1, marginBottom: 16 },
   actions: { flexDirection: "row", gap: 26, alignItems: "center" },
   copied: { marginTop: 12, fontSize: 13, fontFamily: "DMSans_600SemiBold" },

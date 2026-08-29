@@ -33,16 +33,19 @@ EXPO_PUBLIC_SUPABASE_URL
 EXPO_PUBLIC_SUPABASE_ANON_KEY
 ```
 
-## Seeding the database (250k+ quotes, all categories, multi-language)
-1. Add the `language` column (once):
-   - **Supabase → SQL Editor:**
-     `alter table public.quotes add column if not exists language text not null default 'English';`
-   - or from the terminal with your DB password:
+## Seeding the database (250k+ quotes, all categories, native multi-language)
+The collection stores **original/native quotes** per language/country — quotes are
+written directly in each language, never machine-translated from English. Each row
+carries `language`, `country`, `original_language`, `source`, and `is_original`.
+
+1. Add the columns (once):
+   - **Supabase → SQL Editor:** run `supabase_schema.sql`, or
+   - from the terminal with your DB password:
      ```bash
      $env:DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.yxrfyzqhwuvuxwdfzcjs.supabase.co:5432/postgres"
      npx tsx scripts/migrate.ts
      ```
-2. Upload quotes (idempotent, batched, multi-language, all categories, with author names):
+2. Upload quotes (idempotent, batched, native multi-language, all categories, with author names):
    ```bash
    $env:EXPO_PUBLIC_SUPABASE_URL="https://yxrfyzqhwuvuxwdfzcjs.supabase.co"
    $env:EXPO_PUBLIC_SUPABASE_ANON_KEY="YOUR_ANON_KEY"
@@ -50,6 +53,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY
    ```
    Default target is `250000`. Pass a larger number to upload more. Add more languages /
    themes in `LANG_DATA` (`scripts/seed-quotes.ts`) to expand variety and language coverage.
+   Each generated quote is stamped with its home `country` and `original_language` code.
 
 ## Run locally
 ```bash

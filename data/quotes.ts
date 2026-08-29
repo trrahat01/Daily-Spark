@@ -8,8 +8,14 @@ export interface Quote {
   text: string;
   author: string;
   category: string;
-  source?: string;
+  source?: string | null;
   language?: string;
+  /** Home country the quote's language belongs to. */
+  country?: string | null;
+  /** ISO-639 code of the language the quote was originally written in. */
+  original_language?: string | null;
+  /** Whether this quote is original/native to its language (never a translation). */
+  is_original?: boolean;
   featured?: boolean;
 }
 
@@ -19,7 +25,18 @@ const q = (
   author: string,
   category: string,
   featured?: boolean
-): Quote => ({ id, text, author: author || "Unknown", category, featured });
+): Quote => ({
+  id,
+  text,
+  author: author || "Unknown",
+  category,
+  language: "English",
+  country: "United States",
+  original_language: "en",
+  is_original: true,
+  source: "Daily Spark (original)",
+  featured,
+});
 
 export const BUNDLED_QUOTES: Quote[] = [
   q("m1", "Small steps every day lead to big changes.", "Unknown", "Motivation", true),

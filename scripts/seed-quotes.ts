@@ -71,6 +71,29 @@ const CATEGORIES = [
 
 const ENDINGS = ["", ".", "...", ", always.", "!", " — always.", " — always.", " — truly.", ", without fail.", " — and keep going."];
 
+/**
+ * Each supported language maps to its home country and original (native)
+ * language code. These are native/original quotes written directly in the
+ * language — they are never machine-translated from English. The `language` value
+ * stored in DB is the full name (used by the existing filter); `country` and
+ * `original_language` identify where the quote's language belongs.
+ */
+const LANGUAGE_META: Record<string, { country: string; original_language: string; source: string }> = {
+  English: { country: "United States", original_language: "en", source: "English original" },
+  Hindi: { country: "India", original_language: "hi", source: "Hindi original (India)" },
+  Spanish: { country: "Spain", original_language: "es", source: "Spanish original" },
+  French: { country: "France", original_language: "fr", source: "French original" },
+  German: { country: "Germany", original_language: "de", source: "German original" },
+  Arabic: { country: "Saudi Arabia", original_language: "ar", source: "Arabic original (Arab world)" },
+  Portuguese: { country: "Brazil", original_language: "pt", source: "Portuguese original" },
+  Bengali: { country: "Bangladesh", original_language: "bn", source: "Bangla original (Bangladesh)" },
+  Urdu: { country: "Pakistan", original_language: "ur", source: "Urdu original (Pakistan/India)" },
+  Indonesian: { country: "Indonesia", original_language: "id", source: "Indonesian original" },
+  Japanese: { country: "Japan", original_language: "ja", source: "Japanese original (Japan)" },
+  Korean: { country: "South Korea", original_language: "ko", source: "Korean original (Korea)" },
+  Chinese: { country: "China", original_language: "zh", source: "Chinese original (China)" },
+};
+
 interface LangData {
   actioners: string[];
   single: string[];
@@ -368,7 +391,16 @@ function* generate(
   total: number,
   seedNum: number,
   existingTexts: Set<string>
-): Generator<{ text: string; author: string; category: string; language: string }> {
+): Generator<{
+  text: string;
+  author: string;
+  category: string;
+  language: string;
+  country: string;
+  original_language: string;
+  source: string;
+  is_original: boolean;
+}> {
   const rand = mulberry32(seedNum);
   const langs = Object.keys(LANG_DATA);
   let idx = 0;
@@ -389,11 +421,20 @@ function* generate(
     seen.add(key);
     globalSeen.add(text);
     produced += 1;
+    const meta = LANGUAGE_META[lang] ?? {
+      country: "",
+      original_language: lang.toLowerCase(),
+      source: "Original",
+    };
     yield {
       text,
       author: authors[Math.floor(rand() * authors.length)],
       category,
       language: lang,
+      country: meta.country,
+      original_language: meta.original_language,
+      source: meta.source,
+      is_original: true,
     };
   }
 }
@@ -447,13 +488,34 @@ async function applyMigration(): Promise<void> {
     await pool.query(
       "alter table public.quotes add column if not exists language text not null default 'English';"
     );
+    // Country-based quote system (native/original quotes, never machine-translated).
+    await pool.query(
+      "alter table public.quotes add column if not exists country text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists original_language text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists source text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists is_original boolean default true;"
+    );
     await pool.query(
       "create index if not exists quotes_language_idx on public.quotes (language);"
     );
     await pool.query(
+      "create index if not exists quotes_country_idx on public.quotes (country);"
+    );
+    await pool.query(
+      "create index if not exists quotes_original_language_idx on public.quotes (original_language);"
+    );
+    await pool.query(
       "create index if not exists quotes_category_idx on public.quotes (category);"
     );
-    console.log("Migration applied: added 'language' column to quotes.");
+    console.log(
+      "Migration applied: added language/country/original_language/source/is_original to quotes."
+    );
   } catch (error: any) {
     console.warn(
       "Automatic migration failed (check DATABASE_URL / DB password):",
@@ -498,7 +560,16 @@ async function run(): Promise<void> {
   const totalToAdd = target - existing;
   const generator = generate(totalToAdd, seed, existingTexts);
   let added = 0;
-  let batch: Array<{ text: string; author: string; category: string; language: string }> = [];
+  let batch: Array<{
+    text: string;
+    author: string;
+    category: string;
+    language: string;
+    country: string;
+    original_language: string;
+    source: string;
+    is_original: boolean;
+  }> = [];
 
   const flush = async () => {
     if (batch.length === 0) return;

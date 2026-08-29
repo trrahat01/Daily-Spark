@@ -22,6 +22,7 @@ import AdBanner from "@/components/AdBanner";
 import StreakCalendar from "@/components/StreakCalendar";
 import { trackInterstitialCheckpoint } from "@/lib/ads";
 import { useLanguage } from "@/lib/language-context";
+import { LANGUAGES } from "@/lib/languages";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -36,9 +37,14 @@ export default function HomeScreen() {
 
   const webTopInset = Platform.OS === "web" ? 67 : 0;
 
+  // The selected language maps 1:1 to its home country. We load native quotes
+  // for that language/country — never machine-translated English quotes.
+  const selectedCountry = LANGUAGES.find((l) => l.code === language)?.country;
+
   const { data: quotes = [], isLoading } = useQuery({
-    queryKey: ["quotes", language],
-    queryFn: () => getQuotes(language),
+    queryKey: ["quotes", language, selectedCountry],
+    queryFn: () =>
+      getQuotes({ language: language || undefined, country: selectedCountry }),
   });
 
   const { data: categories = [] } = useQuery({

@@ -104,6 +104,10 @@ export interface Quote {
   author: string;
   category: string;
   language?: string;
+  country?: string | null;
+  original_language?: string | null;
+  source?: string | null;
+  is_original?: boolean;
   image_url?: string | null;
   created_at?: string;
   is_favorite?: boolean;
@@ -115,6 +119,10 @@ export type QuoteInput = {
   author: string;
   category: string;
   language?: string;
+  country?: string | null;
+  original_language?: string | null;
+  source?: string | null;
+  is_original?: boolean;
   image_url?: string | null;
 };
 
@@ -163,11 +171,22 @@ export async function getHiddenQuoteIds(): Promise<string[]> {
   return getHiddenIds();
 }
 
+export interface QuoteFilter {
+  /** Filter to a single language (full name, e.g. "English"). */
+  language?: string;
+  /** Filter to a single country (e.g. "Bangladesh"). */
+  country?: string;
+}
+
 /**
- * Fetches quotes from Supabase. `language` filters to a single language (omit
- * to load everything), and quotes hidden on this device are excluded.
+ * Fetches quotes from Supabase. Filters to a single language and/or country
+ * (omit both to load everything). Quotes hidden on this device are excluded.
+ *
+ * Quotes are always native to their language/country — this never machine-
+ * translates an English quote into another language.
  */
-export async function getQuotes(language?: string): Promise<Quote[]> {
+export async function getQuotes(filter?: QuoteFilter): Promise<Quote[]> {
+  const { language, country } = filter ?? {};
   const favIds = await getFavoriteIds();
   const hiddenIds = await getHiddenIds();
   const favSet = new Set(favIds);
@@ -176,6 +195,9 @@ export async function getQuotes(language?: string): Promise<Quote[]> {
   let query = supabase.from("quotes").select("*");
   if (language) {
     query = query.eq("language", language);
+  }
+  if (country) {
+    query = query.eq("country", country);
   }
   const { data, error } = await query.order("created_at", { ascending: false });
   if (error) throw error;
@@ -267,6 +289,10 @@ export async function addQuoteRecord(quote: QuoteInput): Promise<void> {
       author: quote.author,
       category: quote.category,
       language: quote.language || "English",
+      country: quote.country || null,
+      original_language: quote.original_language || null,
+      source: quote.source || null,
+      is_original: quote.is_original ?? true,
       image_url: quote.image_url || null,
     },
   ]);
@@ -280,6 +306,10 @@ export async function addQuotesBulk(quotes: QuoteInput[]): Promise<number> {
     author: quote.author,
     category: quote.category,
     language: quote.language || "English",
+    country: quote.country || null,
+    original_language: quote.original_language || null,
+    source: quote.source || null,
+    is_original: quote.is_original ?? true,
     image_url: quote.image_url || null,
   }));
   const { error } = await supabase.from("quotes").insert(payload);
@@ -292,11 +322,22 @@ export async function updateQuote(
   text: string,
   author: string,
   category: string,
-  image_url?: string | null
+  image_url?: string | null,
+  country?: string | null,
+  original_language?: string | null,
+  source?: string | null
 ): Promise<void> {
   const { error } = await supabase
     .from("quotes")
-    .update({ text, author, category, image_url: image_url || null })
+    .update({
+      text,
+      author,
+      category,
+      image_url: image_url || null,
+      country: country || null,
+      original_language: original_language || null,
+      source: source || null,
+    })
     .eq("id", id);
   if (error) throw error;
 }

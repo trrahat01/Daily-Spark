@@ -21,6 +21,8 @@ import FavoriteButton from "@/components/FavoriteButton";
 import { Quote } from "@/data/quotes";
 import { useFavorites } from "@/hooks/useFavorites";
 import { getCategories, searchQuotes, getQuotes } from "@/lib/quote-service";
+import { useLanguage } from "@/lib/language-context";
+import { LANGUAGES } from "@/lib/languages";
 import { trackSearch, trackCategoryOpened } from "@/services/analytics";
 
 export default function ExploreScreen() {
@@ -31,16 +33,20 @@ export default function ExploreScreen() {
   const [query, setQuery] = useState("");
   const debounced = useDebouncedValue(query, 280);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { language } = useLanguage();
+  // Respect the selected language/country: native quotes only, never a
+  // machine-translated English quote.
+  const selectedCountry = LANGUAGES.find((l) => l.code === language)?.country;
 
   const catsQuery = useQuery({ queryKey: ["categories"], queryFn: getCategories });
   const searchQuery = useQuery({
-    queryKey: ["search", debounced],
-    queryFn: () => searchQuotes(debounced),
+    queryKey: ["search", debounced, language, selectedCountry],
+    queryFn: () => searchQuotes(debounced, language, selectedCountry),
     enabled: debounced.trim().length > 1,
   });
   const allQuery = useQuery({
-    queryKey: ["explore-quotes"],
-    queryFn: () => getQuotes(),
+    queryKey: ["explore-quotes", language, selectedCountry],
+    queryFn: () => getQuotes(language, selectedCountry),
     enabled: debounced.trim().length <= 1,
   });
 

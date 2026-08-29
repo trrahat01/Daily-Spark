@@ -36,13 +36,34 @@ async function main(): Promise<void> {
     await pool.query(
       "alter table public.quotes add column if not exists language text not null default 'English';"
     );
+    // Country-based quote system (native/original quotes, never machine-translated).
+    await pool.query(
+      "alter table public.quotes add column if not exists country text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists original_language text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists source text;"
+    );
+    await pool.query(
+      "alter table public.quotes add column if not exists is_original boolean default true;"
+    );
     await pool.query(
       "create index if not exists quotes_language_idx on public.quotes (language);"
     );
     await pool.query(
+      "create index if not exists quotes_country_idx on public.quotes (country);"
+    );
+    await pool.query(
+      "create index if not exists quotes_original_language_idx on public.quotes (original_language);"
+    );
+    await pool.query(
       "create index if not exists quotes_category_idx on public.quotes (category);"
     );
-    console.log("OK: 'language' column and indexes are ready.");
+    console.log(
+      "OK: 'language', 'country', 'original_language', 'source', 'is_original' columns and indexes are ready."
+    );
   } catch (error: any) {
     console.error("Migration failed:", error?.message);
     process.exit(1);
