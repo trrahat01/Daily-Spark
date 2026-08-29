@@ -1,5 +1,21 @@
 # Daily Spark — Release Notes
 
+## Version 2.3.0 (2026-08-23)
+**Build:** Android versionCode `5` · iOS buildNumber `5` · package `com.dailyspark.quotes`
+
+### ✨ New in this release
+- **❤️ Romantic quotes** — Authentic, emotional quotes about love, first love,
+  long-distance love, soulmates, missing someone, and commitment.
+- **💔 Sad quotes** — Emotional quotes about heartbreak, lost love, separation,
+  loneliness, betrayal, regret, and moving on.
+- **Native, country-based content** — Every Romantic/Sad quote is original to its
+  language/country. No quote is machine-translated from English. Each quote carries
+  its home country and original language.
+- All existing features remain: daily reminder, streak calendar, analytics, favorites,
+  search, and multi-language/country filtering.
+
+---
+
 ## Version 2.2.0 (2026-08-22)
 **Build:** Android versionCode `4` · iOS buildNumber `4` · package `com.dailyspark.quotes`
 

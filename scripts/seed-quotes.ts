@@ -13,8 +13,10 @@
  * It is idempotent: it skips rows that already exist (by exact text) and will
  * not exceed the existing row count if it is already >= the target.
  *
- * Each row stores: text, author, category AND language.
- * Add/remove languages by editing the LANG_DATA object below.
+ * Each row stores: text, author, category, language AND country/original_language.
+ * Romantic ❤️ and Sad 💔 categories use authentic native quotes (ROMANTIC_SAD_QUOTES),
+ * never machine-translated from English. Add/remove languages by editing the
+ * LANG_DATA object below.
  *
  * Optional: set DATABASE_URL to your Supabase direct connection string (with
  * your real DB password) and the script will also create the missing
@@ -67,6 +69,8 @@ const CATEGORIES = [
   "Happiness",
   "Courage",
   "Hope",
+  "Romantic",
+  "Sad",
 ];
 
 const ENDINGS = ["", ".", "...", ", always.", "!", " — always.", " — always.", " — truly.", ", without fail.", " — and keep going."];
@@ -335,6 +339,158 @@ const LANG_DATA: Record<string, LangData> = {
   },
 };
 
+/**
+ * Authentic, emotionally meaningful Romantic ❤️ and Sad 💔 quotes.
+ * Complete quotes written directly in each language — NEVER machine-translated
+ * from English. Native to each language/country, author "Unknown", is_original true.
+ */
+const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }> = {
+  English: {
+    romantic: [
+      "Loving you is the calmest home I have ever known.",
+      "I fell for you slowly, and then all at once.",
+      "Every love song finally makes sense when I think of you.",
+      "Home is not a place; it is wherever your hand finds mine.",
+      "You are my favorite good morning and my sweetest good night.",
+      "In a world that moves too fast, I found my forever in you.",
+    ],
+    sad: [
+      "Some people leave footprints on your heart and simply walk away.",
+      "It still hurts to remember us the way we used to be.",
+      "I miss the person we were before we became strangers.",
+      "Grief is just love with nowhere left to go.",
+      "I feel lonely in rooms full of people since you left.",
+      "I keep our moments alive, even as you move on.",
+    ],
+  },
+  Hindi: {
+    romantic: [
+      "तुमसे प्यार करना मेरे जीवन की सबसे खूबसूरत बात है।",
+      "मैं धीरे-धीरे तुम्हारा हुआ, और फिर एक पल में पूरा।",
+      "हर प्यार भरा गीत अब तुम्हें याद करके समझ आता है।",
+      "घर कोई जगह नहीं, बस वह जगह है जहाँ तुम्हारा हाथ मेरा साथ दे।",
+      "तुम मेरी सुबह की मुस्कान और शाम का सुकून हो।",
+      "इस तेज़ दुनिया में, मुझे तुममें मेरी मंज़िल मिली।",
+    ],
+    sad: [
+      "कुछ लोग दिल पर निशान छोड़ जाते हैं और चले जाते हैं।",
+      "तुम्हारे बिना हर शांत पल तन्हा लगता है।",
+      "हम जैसे थे, उस बात को याद करना अब भी दर्द देता है।",
+      "अजनबी होने से पहले हम जो थे, मैं उन्हें मिस करता हूँ।",
+      "दर्द बस ऐसा प्यार है जिसका कोई ठिकाना नहीं।",
+      "तुम्हारे जाने के बाद, भीड़ में भी मैं अकेला हूँ।",
+    ],
+  },
+  Spanish: {
+    romantic: [
+      "Amarte es el hogar más tranquilo que he conocido.",
+      "Te amé despacio, y de pronto te amé por completo.",
+      "Cada canción de amor cobra sentido cuando pienso en ti.",
+      "El hogar no es un lugar: es donde tu mano encuentra la mía.",
+      "Eres mi buenos días favorito y mi buenas noches más dulce.",
+      "En un mundo que va deprisa, te encontré a ti para siempre.",
+    ],
+    sad: [
+      "Algunas personas dejan huellas en tu corazón y se van.",
+      "Todavía duele recordarnos como solíamos ser.",
+      "Echo de menos a la persona que éramos antes de ser extraños.",
+      "El duelo es solo amor que no tiene a dónde ir.",
+      "Me siento solo en habitaciones llenas de gente desde que te fuiste.",
+      "Guardo nuestros momentos vivos, mientras tú sigues tu camino.",
+    ],
+  },
+  French: {
+    romantic: [
+      "T'aimer est la maison la plus calme que j'aie jamais connue.",
+      "Je suis tombé amoureux de toi lentement, puis d'un seul coup.",
+      "Chaque chanson d'amour prend enfin son sens quand je pense à toi.",
+      "La maison n'est pas un lieu : c'est là où ta main trouve la mienne.",
+      "Tu es mon bonjour préféré et mon plus doux bonsoir.",
+      "Dans un monde si pressé, j'ai trouvé mon toujours en toi.",
+    ],
+    sad: [
+      "Certaines personnes marquent ton cœur et s'en vont.",
+      "Ça fait encore mal de se souvenir de nous comme avant.",
+      "Tu me manques : la personne que nous étions avant de devenir étrangers.",
+      "Le chagrin n'est que de l'amour qui n'a plus où aller.",
+      "Je me sens seul dans des pièces pleines de monde depuis ton départ.",
+      "Je garde nos souvenirs vivants, pendant que tu avances.",
+    ],
+  },
+  Bengali: {
+    romantic: [
+      "তোমাকে ভালোবাসা আমার জীবনের সবচেয়ে সুন্দর অধ্যায়।",
+      "তুমি আমার ভোরের হাসি আর সন্ধ্যার শান্তি।",
+      "বাড়ি কোনো জায়গা নয়, বাড়ি হলো সেই জায়গা যেখানে তোমার হাত আমার হাত খুঁজে পায়।",
+      "তোমার কথা ভাবলেই প্রতিটা গান বোঝা যায়।",
+      "এত তাড়াহুড়ার এই পৃথিবীতে, আমার অনন্তকাল তুমি।",
+      "তুমি আমার প্রিয় সকাল আর সবচেয়ে মধুর রাত।",
+    ],
+    sad: [
+      "কিছু মানুষ হৃদয়ে দাগ রেখে চলে যায়।",
+      "তুমি চলে যাওয়ার পর ভিড়েও আমি একা।",
+      "আমরা আগে যেমন ছিলাম, সেটা মনে করতেও কষ্ট লাগে।",
+      "অচেনা হওয়ার আগে আমরা যা ছিলাম, তাকে মিস করি।",
+      "বেদনা হলো সেই ভালোবাসা যার ঠিকানা নেই।",
+      "আমি আমাদের মুহূর্তগুলো বাঁচিয়ে রাখি, অথচ তুমি এগিয়ে চলে যাও।",
+    ],
+  },
+  Arabic: {
+    romantic: [
+      "حُبُّكِ هو بيتي الأكثرُ هدوءًا الذي عرفتُهُ.",
+      "أحببتُكِ ببطءٍ، ثم أصبحتِ عالمي كله.",
+      "كل أغنية حب تأخذ معناها حين أفكر فيكِ.",
+      "البيتُ ليس مكانًا، بل حيث تلتقي يدُكِ بيدي.",
+      "أنتِ صباحي المفضل ومسائي الأجمل.",
+      "في عالمٍ يسرعُ كثيرًا، وجدتُ أبديتي فيكِ.",
+    ],
+    sad: [
+      "بعض الناس يتركون أثرًا في قلبك ويرحلون.",
+      "ما زال يؤلمني أن أتذكرنا كما كنا.",
+      "أشتاق لمن كنا قبل أن نصبح غرباء.",
+      "الحزنُ حبٌّ لا يجد له مكانًا يذهب إليه.",
+      "أشعر بالوحدة في غرفٍ ممتلئةٍ منذ رحيلكِ.",
+      "أُبقي لحظاتنا حيّة، بينما تمضين في طريقكِ.",
+    ],
+  },
+  Portuguese: {
+    romantic: [
+      "Amar você é o lar mais calmo que já conheci.",
+      "Eu te amei devagar e, de repente, te amei por inteiro.",
+      "Cada música de amor faz sentido quando penso em você.",
+      "Lar não é um lugar: é onde sua mão encontra a minha.",
+      "Você é meu bom-dia favorito e meu boa-noite mais doce.",
+      "Num mundo tão apressado, encontrei meu para sempre em você.",
+    ],
+    sad: [
+      "Algumas pessoas deixam marcas no seu coração e vão embora.",
+      "Ainda dói lembrar de nós como éramos.",
+      "Sinto falta de quem fomos antes de nos tornarmos estranhos.",
+      "A tristeza é só amor sem lugar para ir.",
+      "Me sinto sozinho em salas cheias desde que você foi embora.",
+      "Guardo nossos momentos vivos, enquanto você segue em frente.",
+    ],
+  },
+  German: {
+    romantic: [
+      "Dich zu lieben ist das ruhigste Zuhause, das ich kenne.",
+      "Ich habe dich langsam geliebt und dann mit einem Mal ganz.",
+      "Jedes Liebeslied ergibt Sinn, wenn ich an dich denke.",
+      "Zuhause ist kein Ort: Es ist dort, wo deine Hand meine findet.",
+      "Du bist mein liebstes Guten Morgen und mein schönstes Gute Nacht.",
+      "In einer Welt, die zu schnell rennt, fand ich mein Für-immer in dir.",
+    ],
+    sad: [
+      "Manche Menschen hinterlassen Spuren in deinem Herzen und gehen.",
+      "Es tut immer noch weh, uns so zu erinnern, wie wir waren.",
+      "Ich vermisse, wer wir waren, bevor wir Fremde wurden.",
+      "Trauer ist nur Liebe, die keinen Platz hat zu bleiben.",
+      "Ich fühle mich einsam in vollen Räumen, seit du gegangen bist.",
+      "Ich halte unsere Momente lebendig, während du weiterziehst.",
+    ],
+  },
+};
+
   const authors = [
   "Unknown",
   "Anonymous",
@@ -363,6 +519,15 @@ const LANG_DATA: Record<string, LangData> = {
 ];
 
 function buildQuote(rand: () => number, lang: string, category: string): string {
+  // Romantic ❤️ and Sad 💔 use authentic, complete native quotes — never
+  // machine-translated, never templated into unnatural sentences.
+  if (category === "Romantic" || category === "Sad") {
+    const set = ROMANTIC_SAD_QUOTES[lang];
+    const pool = category === "Romantic" ? set?.romantic : set?.sad;
+    if (pool && pool.length) {
+      return pool[Math.floor(rand() * pool.length)];
+    }
+  }
   const d = LANG_DATA[lang];
   const themes = d.themes[category] || d.themes["Motivation"] || [];
   const t1 = themes[Math.floor(rand() * themes.length)];
@@ -428,7 +593,11 @@ function* generate(
     };
     yield {
       text,
-      author: authors[Math.floor(rand() * authors.length)],
+      // Romantic/Sad quotes are original and never claim a fabricated author.
+      author:
+        category === "Romantic" || category === "Sad"
+          ? "Unknown"
+          : authors[Math.floor(rand() * authors.length)],
       category,
       language: lang,
       country: meta.country,

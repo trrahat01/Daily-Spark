@@ -64,7 +64,9 @@ insert into public.categories (name) values
   ('Inspiration'),
   ('Life'),
   ('Success'),
-  ('Wisdom')
+  ('Wisdom'),
+  ('Romantic'),
+  ('Sad')
 on conflict (name) do nothing;
 
 -- Default Admin (as per replit.md)
