@@ -23,7 +23,7 @@ export interface AppLanguage {
 }
 
 export const LANGUAGES: AppLanguage[] = [
-  { code: "English", label: "English", flag: "🇬🇧", country: "United Kingdom", countryCode: "GB", langCode: "en", nativeName: "English" },
+  { code: "English", label: "English", flag: "🇺🇸", country: "United States", countryCode: "US", langCode: "en", nativeName: "English" },
   { code: "Hindi", label: "हिन्दी", flag: "🇮🇳", country: "India", countryCode: "IN", langCode: "hi", nativeName: "Hindi" },
   { code: "Spanish", label: "Español", flag: "🇪🇸", country: "Spain", countryCode: "ES", langCode: "es", nativeName: "Spanish" },
   { code: "French", label: "Français", flag: "🇫🇷", country: "France", countryCode: "FR", langCode: "fr", nativeName: "French" },
