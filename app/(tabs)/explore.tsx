@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  ScrollView,
   Pressable,
   ActivityIndicator,
   Platform,
@@ -101,16 +100,14 @@ export default function ExploreScreen() {
 
       {!searching ? (
         <>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chips}
-          >
+          <View style={styles.topicsHeader}>
+            <Text style={[styles.section, { color: c.textTertiary }]}>Browse topics</Text>
+          </View>
+          <View style={styles.chipWrap}>
             {catsQuery.data?.map((cat) => (
               <CategoryChip key={cat} label={cat} onPress={() => openCategory(cat)} />
             ))}
-          </ScrollView>
-          <Text style={[styles.section, { color: c.textTertiary }]}>Browse topics</Text>
+          </View>
         </>
       ) : null}
 
@@ -147,7 +144,21 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontFamily: "DMSans_700Bold" },
   subtitle: { fontSize: 14, fontFamily: "DMSans_400Regular", marginBottom: 8 },
   chips: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
-  section: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, fontSize: 12, fontFamily: "DMSans_600SemiBold", textTransform: "uppercase", letterSpacing: 0.5 },
+  chipWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingTop: 4,
+  },
+  topicsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  section: { fontSize: 12, fontFamily: "DMSans_600SemiBold", textTransform: "uppercase", letterSpacing: 0.5 },
   row: {
     flexDirection: "row",
     alignItems: "center",
