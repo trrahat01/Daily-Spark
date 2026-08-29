@@ -484,6 +484,20 @@ const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }>
       "Home is not a place; it is wherever your hand finds mine.",
       "You are my favorite good morning and my sweetest good night.",
       "In a world that moves too fast, I found my forever in you.",
+      "I knew I loved you the day you felt more like a memory I was still making.",
+      "You do not have to say a word; being near you is enough.",
+      "Loving you feels like coming home to myself.",
+      "I would cross every distance just to find the warmth in your eyes.",
+      "Our love is not loud, but it is the steadiest thing I have.",
+      "The best part of my day is the moment our eyes meet.",
+      "I fall for you again every single morning.",
+      "You are the reason I believe in forever.",
+      "Even time moves softer when it is spent with you.",
+      "Your hand in mine is my favorite place to be.",
+      "I love you in all the quiet ways words cannot reach.",
+      "Finding you made sense of every love story I ever heard.",
+      "You are the first person I want to tell everything to.",
+      "I choose you, today, tomorrow, and every day after.",
     ],
     sad: [
       "Some people leave footprints on your heart and simply walk away.",
@@ -492,6 +506,20 @@ const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }>
       "Grief is just love with nowhere left to go.",
       "I feel lonely in rooms full of people since you left.",
       "I keep our moments alive, even as you move on.",
+      "The hardest goodbye is the one nobody ever said out loud.",
+      "I stopped waiting for you, but I have not stopped remembering.",
+      "There is a silence between us now that words cannot fill.",
+      "I miss the way we laughed at things no one else understood.",
+      "You left, but every place still looks for you.",
+      "I carry the weight of us everywhere I go.",
+      "Saying your name feels like reopening a wound.",
+      "I wish I could hate you, but I only miss you.",
+      "We became a story I stay up at night replaying.",
+      "I learned to live without you; I never learned to stop loving you.",
+      "The worst thing about losing you is remembering how we were found.",
+      "Some grief has no name, it is just you missing from my life.",
+      "I gave you everything, and you left with all of it.",
+      "Moving on is the longest road I have ever walked, and I am still on it.",
     ],
   },
   Hindi: {
@@ -502,6 +530,15 @@ const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }>
       "घर कोई जगह नहीं, बस वह जगह है जहाँ तुम्हारा हाथ मेरा साथ दे।",
       "तुम मेरी सुबह की मुस्कान और शाम का सुकून हो।",
       "इस तेज़ दुनिया में, मुझे तुममें मेरी मंज़िल मिली।",
+      "तुम्हारे पास चुप रहना भी मुझे सुकून देता है।",
+      "तुम्हें पाकर मुझे हर किस्सा अपना लगने लगा।",
+      "मैं तुमसे हर रोज़ फिर से प्यार करता हूँ।",
+      "तुम हो तो हर दूरी तय हो जाती है।",
+      "तुम्हारा साथ मेरा सबसे बड़ा घर है।",
+      "तुम मेरे दिल की सबसे प्यारी धड़कन हो।",
+      "तुम्हें देखकर मेरा दिन सौ बार शुरू होता है।",
+      "तुम वजह हो हर मुश्किल आसान होने की।",
+      "मैंने तुम्हें हर जन्म में पहचाना है।",
     ],
     sad: [
       "कुछ लोग दिल पर निशान छोड़ जाते हैं और चले जाते हैं।",
@@ -510,6 +547,15 @@ const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }>
       "अजनबी होने से पहले हम जो थे, मैं उन्हें मिस करता हूँ।",
       "दर्द बस ऐसा प्यार है जिसका कोई ठिकाना नहीं।",
       "तुम्हारे जाने के बाद, भीड़ में भी मैं अकेला हूँ।",
+      "मैं तुम्हारा इंतज़ार छोड़ दिया, पर यादें नहीं छूटीं।",
+      "हमारी हँसी की गूँज अब खामोशी बन गई है।",
+      "तुम चले गए, पर हर जगह अब भी तुम्हें खोजता हूँ।",
+      "तुम्हारा नाम लेना ज़ख्म को फिर से खोल देता है।",
+      "काश तुमसे नफरत कर पाता, बस तुम्हें याद न करता।",
+      "जीना तो सीख गया तुम्हारे बिना, प्यार करना नहीं सीख पाया।",
+      "सबसे बुरा यह है कि तुम गए, और मैं यहाँ रह गया।",
+      "हर जगह तुम्हारी याद ही तो रह गई।",
+      "आगे बढ़ना सबसे लंबी सड़क है, और अब भी चल रहा हूँ।",
     ],
   },
   Spanish: {
@@ -788,7 +834,9 @@ function* generate(
     guard += 1;
     const lang = langs[idx % langs.length];
     idx += 1;
-    const category = CATEGORIES[Math.floor(rand() * CATEGORIES.length)];
+    const category = (process.env.CATEGORY || "").trim()
+      ? (process.env.CATEGORY as string).trim()
+      : CATEGORIES[Math.floor(rand() * CATEGORIES.length)];
     const text = buildQuote(rand, lang, category);
     const key = `${lang}|${text}`;
     // Never re-insert text that already exists in the DB (dedupe across runs),
@@ -967,7 +1015,8 @@ async function run(): Promise<void> {
     console.log(`Done deleting ${deleted.toLocaleString()} quotes.`);
   }
 
-  if (existing >= target) {
+  const onlyCategory = (process.env.CATEGORY || "").trim();
+  if (!onlyCategory && existing >= target) {
     console.log(`Already >= target (${target.toLocaleString()}). Nothing to do.`);
     return;
   }
@@ -975,10 +1024,12 @@ async function run(): Promise<void> {
   await applyMigration();
   await seedCategories();
 
-  const existingTexts = await fetchExistingTexts();
+  const existingTexts = onlyCategory
+    ? new Set<string>()
+    : await fetchExistingTexts();
   console.log(`Loaded ${existingTexts.size.toLocaleString()} existing quote texts to dedupe against.`);
 
-  const totalToAdd = target - existing;
+  const totalToAdd = onlyCategory ? target : target - existing;
   const generator = generate(totalToAdd, seed, existingTexts);
   let added = 0;
   let batch: Array<{
