@@ -199,7 +199,7 @@ export async function getQuotes(filter?: QuoteFilter): Promise<Quote[]> {
   if (country) {
     query = query.eq("country", country);
   }
-  const { data, error } = await query.order("created_at", { ascending: false });
+  const { data, error } = await query.order("id", { ascending: false });
   if (error) throw error;
 
   return (data || [])
