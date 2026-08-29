@@ -58,16 +58,10 @@ create table if not exists public.ad_settings (
 
 -- SEED DATA
 
--- Default Categories
-insert into public.categories (name) values
-  ('Motivation'),
-  ('Inspiration'),
-  ('Life'),
-  ('Success'),
-  ('Wisdom'),
-  ('Romantic'),
-  ('Sad')
-on conflict (name) do nothing;
+-- Categories are managed in the Supabase `categories` table (added via the DB),
+-- not hardcoded here. The app reads categories from Supabase at runtime and the
+-- seed tool (`scripts/seed-quotes.ts`) pulls category names from Supabase too.
+-- To add/rename a category, edit the `categories` table directly in Supabase.
 
 -- Default Admin (as per replit.md)
 insert into public.admins (email, pin) values

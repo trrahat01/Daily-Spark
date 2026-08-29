@@ -58,21 +58,6 @@ function mulberry32(seed: number) {
   };
 }
 
-const CATEGORIES = [
-  "Motivation",
-  "Inspiration",
-  "Life",
-  "Success",
-  "Wisdom",
-  "Love",
-  "Friendship",
-  "Happiness",
-  "Courage",
-  "Hope",
-  "Romantic",
-  "Sad",
-];
-
 const ENDINGS = ["", ".", "...", ", always.", "!", " — always.", " — always.", " — truly.", ", without fail.", " — and keep going."];
 
 /**
@@ -812,7 +797,8 @@ function buildQuote(rand: () => number, lang: string, category: string): string 
 function* generate(
   total: number,
   seedNum: number,
-  existingTexts: Set<string>
+  existingTexts: Set<string>,
+  categories: string[]
 ): Generator<{
   text: string;
   author: string;
@@ -836,7 +822,7 @@ function* generate(
     idx += 1;
     const category = (process.env.CATEGORY || "").trim()
       ? (process.env.CATEGORY as string).trim()
-      : CATEGORIES[Math.floor(rand() * CATEGORIES.length)];
+      : categories[Math.floor(rand() * categories.length)];
     const text = buildQuote(rand, lang, category);
     const key = `${lang}|${text}`;
     // Never re-insert text that already exists in the DB (dedupe across runs),
@@ -887,14 +873,16 @@ async function fetchExistingTexts(): Promise<Set<string>> {
   return set;
 }
 
-async function seedCategories(): Promise<void> {
-  const { error } = await supabase
+async function fetchCategoriesFromDB(): Promise<string[]> {
+  const { data, error } = await supabase
     .from("categories")
-    .insert(CATEGORIES.map((name) => ({ name })));
-  if (error && !/duplicate/i.test(error.message)) {
-    console.error("Categories seed warning:", error.message);
+    .select("name");
+  if (error) {
+    console.error("Fetch categories warning:", error.message);
+    return [];
   }
-  console.log(`Ensured ${CATEGORIES.length} categories.`);
+  const names = (data || []).map((r: any) => r.name).filter(Boolean) as string[];
+  return names.sort();
 }
 
 /**
@@ -1022,7 +1010,13 @@ async function run(): Promise<void> {
   }
 
   await applyMigration();
-  await seedCategories();
+  const dbCategories: string[] = await fetchCategoriesFromDB();
+  if (!dbCategories.length) {
+    console.error("No categories found in Supabase. Aborting seed.");
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`Using ${dbCategories.length} categories from Supabase: ${dbCategories.join(", ")}.`);
 
   const existingTexts = onlyCategory
     ? new Set<string>()
@@ -1030,7 +1024,7 @@ async function run(): Promise<void> {
   console.log(`Loaded ${existingTexts.size.toLocaleString()} existing quote texts to dedupe against.`);
 
   const totalToAdd = onlyCategory ? target : target - existing;
-  const generator = generate(totalToAdd, seed, existingTexts);
+  const generator = generate(totalToAdd, seed, existingTexts, dbCategories);
   let added = 0;
   let batch: Array<{
     text: string;
