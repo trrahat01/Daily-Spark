@@ -337,6 +337,137 @@ const LANG_DATA: Record<string, LangData> = {
       Hope: ["darauf vertrauen dass der Morgen kommt", "ein Licht für morgen brennen lassen", "glauben dass die Geschichte weitergeht", "sich erinnern dass Stürme stärker machen"],
     },
   },
+
+  Urdu: {
+    actioners: ["تم", "ہم", "جو ثابت قدم رہتے ہیں", "ہم سب", "جو دل سے چاہتے ہیں"],
+    single: [
+      "جب ${a} ${t} کا فیصلہ کرتے ہیں تو راستہ خود روشن ہو جاتا ہے${e}",
+      "یہ یاد رکھو کہ ${a} ہمیشہ ${t} سکتے ہیں${e}",
+      "آج کا دن وہ دن بناؤ جب ${a} ${t}${e}",
+      "اس لمحے ${a} کے پاس ${t} کی طاقت ہے${e}",
+      "${t} کا انتخاب کرنا ہی چھپی ہوئی طاقت ہے${e}",
+    ],
+    double: [
+      "${t} اور ${u} — اسی طرح ${a} آگے بڑھتے ہیں${e}",
+      "${a} سب سے زیادہ بڑھتے ہیں جب وہ ${t} سیکھیں اور ${u} کی ہمت کریں${e}",
+    ],
+    themes: {
+      Motivation: ["چھوٹے قدموں سے شروع کرنا", "محنت کو ترقی میں بدلنا", "عمل کو شک سے پہلے چننا", "ہر دن کو مقصد دینا"],
+      Inspiration: ["ہر صبح میں نیا موقع دیکھنا", "زخموں کو حکمت بنانا", "حدوں میں بھی امکان دیکھنا", "خواب کو روشنی بنانا"],
+      Life: ["شور کے بیچ سکون تلاش کرنا", "آج کو کافی سمجھنا", "جو گزرا اس سے بڑھنا", "سادگی میں معنی ڈھونڈنا"],
+      Success: ["قدم بہ قدم ترقی ناپنا", "عارضی ناکامیوں کو ہرانا", "ثابت قدمی کو ہتھیار بنانا", "چھوٹی جیتیں بڑا نتیجہ بنانا"],
+      Wisdom: ["بولنے سے زیادہ سننا", "صبر کی قدر سمجھنا", "سچ کو حق سے پہلے رکھنا", "نرم دلی سے آگے بڑھنا"],
+      Love: ["بغیر حساب کے دینا", "جن سے پیار ہو ان سے نرم رہنا", "سمجھنے سے پہلے سمجھانا", "پیاروں کو قریب رکھنا"],
+      Friendship: ["ایسا دوست بننا جو خود چاہو", "دائرہ چھوٹا اور سچا رکھنا", "مشکل وقت میں ہونا", "دوستی کو عزت دینا"],
+      Happiness: ["چھوٹی خوشیوں میں لطف لینا", "شکایت سے زیادہ شکرگزاری", "عام لمحوں پر مسکرانا", "جو ہے اس پر قناعت"],
+      Courage: ["مشکل کا سکون سے سامنا", "ڈر کے باوجود آگے بڑھنا", "اپنے فیصلے خود لینا", "ہر گرنے کے بعد نئی شروعات"],
+      Hope: ["بھروسہ کہ صبح ضرور آئے گی", "کل کے لیے روشنی جلائے رکھنا", "یقین کہ کہانی ختم نہیں", "طوفان مضبوط بناتے ہیں"],
+    },
+  },
+  Indonesian: {
+    actioners: ["kamu", "kita", "mereka yang bertahan", "kita semua", "mereka yang peduli"],
+    single: [
+      "Jalan menjadi terang ketika ${a} memilih untuk ${t}${e}",
+      "Ingatlah bahwa ${a} selalu bisa ${t}${e}",
+      "Jadikan hari ini hari ketika ${a} mulai ${t}${e}",
+      "Di saat ini ${a} punya kekuatan untuk ${t}${e}",
+      "Ada kekuatan tenang dalam memilih ${t}${e}",
+    ],
+    double: [
+      "${t} dan ${u} — itulah cara ${a} melangkah maju${e}",
+      "${a} tumbuh paling banyak saat belajar ${t} dan berani ${u}${e}",
+    ],
+    themes: {
+      Motivation: ["memulai dari langkah kecil", "mengubah usaha menjadi kemajuan", "memilih tindakan di atas keraguan", "memberi tujuan pada setiap hari"],
+      Inspiration: ["melihat peluang baru di setiap fajar", "mengubah luka menjadi kebijaksanaan", "melihat kemungkinan di balik batas", "menjadikan mimpi sebagai cahaya"],
+      Life: ["mencari ketenangan di tengah bising", "menikmati hari ini sepenuhnya", "tumbuh dari apa yang kamu lalui", "menemukan makna dalam yang sederhana"],
+      Success: ["mengukur kemajuan langkah demi langkah", "mengatasi kemunduran sementara", "menjadikan ketekunan keunggulan", "mengubah kemenangan kecil menjadi besar"],
+      Wisdom: ["lebih banyak mendengar daripada bicara", "memahami nilai kesabaran", "mencari kebenaran sebelum benar", "berjalan rendah hati dengan yang kamu tahu"],
+      Love: ["memberi tanpa menghitung", "lembut pada yang berarti", "mengerti sebelum dimengerti", "memeluk orang yang kamu cintai"],
+      Friendship: ["jadi teman yang kamu harapkan", "jaga lingkaran kecil dan tulus", "hadir saat sulit", "menghormati persahabatan"],
+      Happiness: ["menemukan sukacita pada hal kecil", "memilih syukur daripada keluh", "tersenyum pada hal biasa", "puas dengan yang kamu miliki"],
+      Courage: ["menghadapi kesulitan dengan tenang", "maju meski takut", "mengambil keputusan sendiri", "memulai lagi setelah jatuh"],
+      Hope: ["percaya bahwa fajar akan datang", "menyalakan cahaya untuk esok", "percaya cerita belum berakhir", "ingat badai membuat kita kuat"],
+    },
+  },
+  Japanese: {
+    actioners: ["あなた", "私たち", "あきらめない人", "みんな", "心から願う人"],
+    single: [
+      "${a}が${t}を選ぶとき、道は自分で明るくなる${e}",
+      "覚えておいて、${a}はいつでも${t}ことができる${e}",
+      "今日を、${a}が${t}日目にしよう${e}",
+      "この瞬間、${a}には${t}力がある${e}",
+      "${t}を選ぶことに、静かな強さがある${e}",
+    ],
+    double: [
+      "${t}と${u} — それが${a}が進む方法だ${e}",
+      "${a}は${t}を学び、${u}を敢えてするとき、最も成長する${e}",
+    ],
+    themes: {
+      Motivation: ["小さな一歩から始める", "努力を進歩に変える", "迷いより行動を選ぶ", "毎日に目的を与える"],
+      Inspiration: ["毎朝に新しい機会を見る", "傷を知恵に変える", "限界の先に可能性を見る", "夢を光にする"],
+      Life: ["騒音の中で静けさを探す", "今日を十分に生きる", "経験から成長する", "平凡に意味を見つける"],
+      Success: ["一歩ずつ進捗を測る", "一時の挫折を乗り越える", "忍耐を強みにする", "小さな勝利を大きな結果に"],
+      Wisdom: ["話すより聞く", "忍耐の価値を理解する", "正しさより真実を求める", "知っていることに謙虚に歩む"],
+      Love: ["見返りを求めず与える", "大切な人に優しくする", "理解される前に理解する", "愛する人を近くに抱く"],
+      Friendship: ["出会いたいと思う友人になる", "輪を小さく誠実に保つ", "困難な時にそばにいる", "友情を大切にする"],
+      Happiness: ["小さな喜びに楽しみを見つける", "不平より感謝を選ぶ", "日常に微笑む", "持っているものに満足する"],
+      Courage: ["困難に落ち着いて向き合う", "怖くても前に進む", "自分の決断を下す", "転んだ後また始める"],
+      Hope: ["朝が来ると信じる", "明日のために灯りをともす", "物語は終わっていないと信じる", "嵐が私たちを強くすると知る"],
+    },
+  },
+  Korean: {
+    actioners: ["당신", "우리", "포기하지 않는 사람", "우리 모두", "마음을 다하는 사람"],
+    single: [
+      "${a}가 ${t} 것을 선택할 때 길은 스스로 밝아진다${e}",
+      "기억하세요, ${a}는 언제나 ${t} 수 있습니다${e}",
+      "오늘을 ${a}가 ${t}는 날로 만드세요${e}",
+      "이 순간 ${a}에게는 ${t} 힘이 있습니다${e}",
+      "${t} 것을 선택하는 데 조용한 힘이 있습니다${e}",
+    ],
+    double: [
+      "${t}와 ${u} — 그것이 ${a}가 나아가는 방법입니다${e}",
+      "${a}는 ${t}를 배우고 ${u}를 감행할 때 가장 성장합니다${e}",
+    ],
+    themes: {
+      Motivation: ["작은 발걸음부터 시작하기", "노력을 성장으로 바꾸기", "의심보다 행동 선택하기", "매일의 목적을 찾기"],
+      Inspiration: ["매일 아침 새로운 기회 보기", "상처를 지혜로 바꾸기", "한계 너머의 가능성 보기", "꿈을 빛으로 만들기"],
+      Life: ["소음 속에서 평온 찾기", "오늘을 충분히 살기", "경험 속에서 성장하기", "평범함에서 의미 찾기"],
+      Success: ["한 걸음씩 진전을 재다", "일시적 좌절을 이겨내다", "인내를 강점으로 삼다", "작은 승리를 큰 결과로"],
+      Wisdom: ["말하기보다 듣기", "인내의 가치를 이해하다", "옳음보다 진실을 구하다", "아는 것에 겸손하게 걷다"],
+      Love: ["보상 없이 주기", "중요한 사람에게 부드럽게", "이해받기 전에 이해하기", "사랑하는 사람을 가까이 품다"],
+      Friendship: ["만나고 싶은 친구가 되기", "작고 진실한 원을 유지하기", "어려울 때 곁에 있기", "우정을 소중히 하기"],
+      Happiness: ["작은 기쁨에서 즐거움 찾기", "불평보다 감사 선택하기", "일상에 미소 짓기", "가진 것에 만족하기"],
+      Courage: ["어려움에 침착히 맞서기", "두려워도 앞으로 나아가기", "자신의 결정을 내리기", "넘어진 후 다시 시작하기"],
+      Hope: ["새벽이 온다고 믿기", "내일을 위해 등불 켜기", "이야기는 끝나지 않았다고 믿기", "폭풍이 우리를 강하게 한다고 알기"],
+    },
+  },
+  Chinese: {
+    actioners: ["你", "我们", "坚持的人", "我们所有人", "用心的人"],
+    single: [
+      "当你${a}选择${t}时，路会自己明亮起来${e}",
+      "记住，${a}永远可以${t}${e}",
+      "让今天成为${a}开始${t}的日子${e}",
+      "此刻，${a}拥有${t}的力量${e}",
+      "选择${t}，有一种安静的力量${e}",
+    ],
+    double: [
+      "${t}和${u} — 这就是${a}前进的方式${e}",
+      "${a}在学会${t}并敢于${u}时成长最多${e}",
+    ],
+    themes: {
+      Motivation: ["从小步开始", "把努力变成进步", "选择行动而非犹豫", "给每一天赋予目标"],
+      Inspiration: ["在每个清晨看见新机会", "把伤痛变成智慧", "在限制之外看见可能", "让梦想成为光"],
+      Life: ["在喧嚣中寻找平静", "充分地活在今天", "在经历中成长", "在平凡中找到意义"],
+      Success: ["一步步丈量进步", "克服暂时的挫折", "把坚持变成优势", "把小胜变成大果"],
+      Wisdom: ["多听少说", "理解耐心的价值", "求真胜过求对", "谦逊地走你所知的路"],
+      Love: ["不求回报地给予", "对在乎的人温柔", "在被理解之前理解", "亲近所爱之人"],
+      Friendship: ["成为你想遇见的朋友", "保持小而真诚的圈子", "困难时陪伴", "珍惜友谊"],
+      Happiness: ["从小事中找到快乐", "选择感恩而非抱怨", "对日常微笑", "满足于你所拥有的"],
+      Courage: ["平静地面对困难", "即使害怕也向前", "自己做决定", "跌倒后再开始"],
+      Hope: ["相信黎明会来", "为明天点亮一盏灯", "相信故事没有结束", "记得风暴让我们更坚强"],
+    },
+  },
 };
 
 /**
@@ -487,6 +618,86 @@ const ROMANTIC_SAD_QUOTES: Record<string, { romantic: string[]; sad: string[] }>
       "Trauer ist nur Liebe, die keinen Platz hat zu bleiben.",
       "Ich fühle mich einsam in vollen Räumen, seit du gegangen bist.",
       "Ich halte unsere Momente lebendig, während du weiterziehst.",
+    ],
+  },
+  Urdu: {
+    romantic: [
+      "تم سے محبت کرنا میری زندگی کا سب سے خوبصورت سفر ہے۔",
+      "ہر پیارا گیت اب تمہارے بارے میں لگتا ہے۔",
+      "گھر کوئی جگہ نہیں، گھر وہ جگہ ہے جہاں تمہارا ہاتھ میرا ہاتھ پاتا ہے۔",
+      "تم میری صبح کی مسکراہٹ اور شام کا سکون ہو۔",
+      "اس تیز دنیا میں، میں نے تم میں اپنی منزل پا لی۔",
+    ],
+    sad: [
+      "کچھ لوگ دل پر نشان چھوڑ کر چلے جاتے ہیں۔",
+      "تمہارے جانے کے بعد بھیڑ میں بھی میں تنہا ہوں۔",
+      "ہم جیسے تھے اسے یاد کرنا اب بھی درد دیتا ہے۔",
+      "اجنبی بننے سے پہلے ہم جو تھے، انہیں یاد کرتا ہوں۔",
+      "میں ہمارے لمحوں کو زندہ رکھتا ہوں، جبکہ تم آگے بڑھ جاتے ہو۔",
+    ],
+  },
+  Indonesian: {
+    romantic: [
+      "Mencintaimu adalah rumah paling tenang yang pernah kukenal.",
+      "Aku mencintaimu pelan-pelan, lalu seketika sepenuhnya.",
+      "Setiap lagu cinta masuk akal saat memikirkanmu.",
+      "Rumah bukan tempat: rumah adalah tempat tanganmu bertemu tanganku.",
+      "Kamu adalah selamat pagi favoritku dan selamat malam tergantiku.",
+    ],
+    sad: [
+      "Sebagian orang meninggalkan bekas di hatimu lalu pergi.",
+      "Masih sakit mengingat kita yang dulu.",
+      "Aku rindu siapa kita sebelum menjadi orang asing.",
+      "Kesedihan hanyalah cinta yang tak punya tempat pergi.",
+      "Aku merasa sendiri di ruangan penuh orang sejak kau pergi.",
+    ],
+  },
+  Japanese: {
+    romantic: [
+      "あなたを愛することは、私が知る最も静かな家です。",
+      "ゆっくりとあなたを愛し、それから一瞬で全て愛した。",
+      "あなたを思うと、すべての愛の歌が意味を持つ。",
+      "家は場所ではない——あなたの手が私の手を見つける所だ。",
+      "あなたは私の大好きなおはようであり、いちばん優しいおやすみだ。",
+    ],
+    sad: [
+      "ある人々は心に跡を残して、ただ去っていく。",
+      "以前の私たちを思い出すのは、今でも痛い。",
+      "知らない人になる前の私たちに、会いたい。",
+      "悲しみとは、行き場のなくなった愛のことだ。",
+      "あなたが去ってから、人が溢れる部屋でも孤独だ。",
+    ],
+  },
+  Korean: {
+    romantic: [
+      "당신을 사랑하는 것은 내가 아는 가장 조용한 집입니다.",
+      "나는 천천히 당신을 사랑했고, 그러다 한순간 온전히 사랑했습니다.",
+      "당신을 생각하면 모든 사랑 노래가 의미를 가집니다.",
+      "집은 장소가 아닙니다—당신의 손이 내 손을 찾는 곳입니다.",
+      "당신은 내가 가장 좋아하는 좋은 아침이자 가장 다정한 밤입니다.",
+    ],
+    sad: [
+      "어떤 사람들은 마음에 흔적을 남기고 떠납니다.",
+      "예전의 우리를 기억하는 것은 여전히 아픕니다.",
+      "낯선 사람이 되기 전의 우리가 그립습니다.",
+      "슬픔은 갈 곳이 없는 사랑일 뿐입니다.",
+      "당신이 떠난 뒤, 사람들로 가득한 방에서도 나는 혼자입니다.",
+    ],
+  },
+  Chinese: {
+    romantic: [
+      "爱你，是我所知道的最安静的家。",
+      "我慢慢地爱上了你，然后一下子全部爱上。",
+      "一想到你，所有情歌都有了意义。",
+      "家不是一个地方——是你的手找到我的手的地方。",
+      "你是我最喜欢的早安，也是最温柔的晚安。",
+    ],
+    sad: [
+      "有些人在你心里留下痕迹，然后就这样离开。",
+      "想起曾经的我们，现在仍然会疼。",
+      "我怀念成为陌生人之前的我们。",
+      "悲伤，不过是无处安放的爱。",
+      "你离开后，即使在满是人的房间，我也感到孤独。",
     ],
   },
 };
@@ -713,8 +924,35 @@ async function run(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  const existing = count ?? 0;
+  let existing = count ?? 0;
   console.log(`Existing quotes in DB: ${existing.toLocaleString()}`);
+
+  // Optional full wipe before reseeding (CLEAR=1 npx tsx scripts/seed-quotes.ts).
+  const clear = (process.env.CLEAR || "").trim().toLowerCase() === "1";
+  if (clear && existing > 0) {
+    console.log("CLEAR=1 → deleting all existing quotes...");
+    // Delete in pages to avoid a single oversized DELETE.
+    let deleted = 0;
+    for (;;) {
+      const { data, error } = await supabase
+        .from("quotes")
+        .delete()
+        .neq("id", "00000000-0000-0000-0000-000000000000")
+        .select("id")
+        .limit(1000);
+      if (error) {
+        console.error("Delete error:", error.message);
+        process.exitCode = 1;
+        return;
+      }
+      const n = data?.length ?? 0;
+      deleted += n;
+      if (!data || data.length === 0) break;
+    }
+    existing = 0;
+    console.log(`Deleted ${deleted.toLocaleString()} quotes.`);
+  }
+
   if (existing >= target) {
     console.log(`Already >= target (${target.toLocaleString()}). Nothing to do.`);
     return;
