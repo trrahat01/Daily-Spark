@@ -44,7 +44,11 @@ export default function HomeScreen() {
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ["quotes", language, selectedCountry],
     queryFn: () =>
-      getQuotes({ language: language || undefined, country: selectedCountry }),
+      getQuotes({
+        language: language || undefined,
+        country: selectedCountry,
+        limit: 200,
+      }),
   });
 
   const { data: categories = [] } = useQuery({

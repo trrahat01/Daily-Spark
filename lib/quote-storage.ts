@@ -176,6 +176,8 @@ export interface QuoteFilter {
   language?: string;
   /** Filter to a single country (e.g. "Bangladesh"). */
   country?: string;
+  /** Cap the number of rows returned (keeps the query fast / within timeouts). */
+  limit?: number;
 }
 
 /**
@@ -186,7 +188,7 @@ export interface QuoteFilter {
  * translates an English quote into another language.
  */
 export async function getQuotes(filter?: QuoteFilter): Promise<Quote[]> {
-  const { language, country } = filter ?? {};
+  const { language, country, limit } = filter ?? {};
   const favIds = await getFavoriteIds();
   const hiddenIds = await getHiddenIds();
   const favSet = new Set(favIds);
@@ -199,7 +201,11 @@ export async function getQuotes(filter?: QuoteFilter): Promise<Quote[]> {
   if (country) {
     query = query.eq("country", country);
   }
-  const { data, error } = await query.order("id", { ascending: false });
+  query = query.order("id", { ascending: false });
+  if (limit) {
+    query = query.limit(limit);
+  }
+  const { data, error } = await query;
   if (error) throw error;
 
   return (data || [])
