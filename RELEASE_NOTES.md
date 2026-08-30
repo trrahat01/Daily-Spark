@@ -1,5 +1,17 @@
 # Daily Spark — Release Notes
 
+## Version 2.3.1 (2026-08-29)
+**Build:** Android versionCode `6` · iOS buildNumber `6` · package `com.dailyspark.quotes`
+
+### 🔧 Fixes
+- **Fixed quotes not loading** — the home feed now returns quotes reliably. Resolved
+  a Supabase query timeout by ordering by id and bounding the result, and aligned
+  language/country matching so selected languages always show their native quotes.
+- **Improved Explore category layout** — category chips now wrap into a tidy grid
+  under a clean "Browse topics" header.
+
+---
+
 ## Version 2.3.0 (2026-08-29)
 **Build:** Android versionCode `5` · iOS buildNumber `5` · package `com.dailyspark.quotes`
 
